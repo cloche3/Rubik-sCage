@@ -3,6 +3,7 @@ from hashlib import new
 from string import hexdigits
 import numpy as np
 
+size = 2
 
 def __init__(self, height=None, new_stone = 0,depth = 0, reach =0):
     if height is None:
@@ -71,7 +72,7 @@ def stcan(self):
         new_stone = (new_stone[1], new_stone[0], new_stone[2])
 
         #回転
-        st_ins = stage(heigits = s_array, new_stone = new_stone, depth = self.depth)
+        st_ins = stage(heights = s_array, new_stone = new_stone, depth = self.depth)
         st_dic[st_ins.heights] = st_ins
         s_array = tuple(l[::1] for l in s_array)
         new_stone = (size-1-new_stone[0], new_stone[1], new_stone[2])
@@ -82,7 +83,7 @@ def stcan(self):
 def st_ch(target):
     children = target.nxst()
     for i in children:
-        all_in = i.check_all()
+        all_in = i.check_call()
         if all_in == 1 and target.depth%2 == 0:
             return 1
         elif all_in == 2 and target.depth%2 == 1:
