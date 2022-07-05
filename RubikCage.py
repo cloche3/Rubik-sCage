@@ -88,7 +88,7 @@ def st_ch(target):
             return 1
         elif all_in == 2 and target.depth%2 == 1:
             return 2
-        drow = 0
+        draw = 0
     for i in children:
         judge = st_ch(i)
         if judge == 1 and target.depth % 2 == 0:
@@ -96,8 +96,8 @@ def st_ch(target):
         elif judge == 2 and target.depth % 2 == 1:
             return 2
         elif judge == 0 or len(children) == 0:
-            drow = 1
-        if drow == 1:
+            draw = 1
+        if draw == 1:
             return 0
     if target.depth%2 == 0:
         return 2

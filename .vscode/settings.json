@@ -1,0 +1,12 @@
+{
+    "cSpell.words": [
+        "nxbl",
+        "nxst",
+        "nxway",
+        "stcan"
+    ],
+    "python.analysis.extraPaths": [
+        "DoNotTouchThisFolder"
+    ],
+    "python.jediEnabled": false
+}
