@@ -3,7 +3,7 @@ from hashlib import new
 from string import hexdigits
 import numpy as np
 
-size = 2
+size = 3
 
 def __init__(self, height=None, new_stone = 0,depth = 0, reach =0):
     if height is None:
@@ -26,7 +26,7 @@ def nxbl(self):
     else:
         for y in range(size):
             for x in range(size):
-                if self.height[x][y] < 9:
+                if self.height[x][y] < 9:   # enter center
                     n_bl.append((x,y))
         return n_bl
 
@@ -37,7 +37,7 @@ def nxst(self):
     nxway = self.nxbl()
     for x,y in nxway:
         child = copy.deepcopy(self)
-        size = 4
+        size = 3
         stage_low = []
         for j in range(size):
             if j == y:
