@@ -19,7 +19,7 @@ def __init__(self, height=None, new_stone = 0,depth = 0, reach =0):
     else:
         pass
 
-def nxbl(self):
+def next_reach(self):
     n_bl = []
     if self.reach != []:
         return [self.reach]
@@ -30,7 +30,7 @@ def nxbl(self):
                     n_bl.append((x,y))
         return n_bl
 
-def nxst(self):
+def next_stage(self):
     next_st = []
     st_list = []
     hash_t = set()
@@ -58,7 +58,7 @@ def nxst(self):
                 pass # 未実装
     child.heights = tuple(stage_low)
 
-def stcan(self):
+def to_canonical(self):
     st_dic = {}
     new_stone = self.new_stone
     s_array = self.heights
@@ -80,7 +80,7 @@ def stcan(self):
     st_can = st_dic[min(st_dic)]
     return st_can
 
-def st_ch(target):
+def is_finish(target):
     children = target.nxst()
     for i in children:
         all_in = i.check_call()
@@ -90,7 +90,7 @@ def st_ch(target):
             return 2
         draw = 0
     for i in children:
-        judge = st_ch(i)
+        judge = is_finish(i)
         if judge == 1 and target.depth % 2 == 0:
             return 1
         elif judge == 2 and target.depth % 2 == 1:

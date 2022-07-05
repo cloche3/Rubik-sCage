@@ -2,8 +2,7 @@
     "cSpell.words": [
         "nxbl",
         "nxst",
-        "nxway",
-        "stcan"
+        "nxway"
     ],
     "python.analysis.extraPaths": [
         "DoNotTouchThisFolder"
