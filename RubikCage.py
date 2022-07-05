@@ -34,7 +34,7 @@ def next_stage(self):
     next_st = []
     st_list = []
     hash_t = set()
-    nxway = self.nxbl()
+    nxway = self.next_reach()
     for x,y in nxway:
         child = copy.deepcopy(self)
         size = 3
@@ -81,7 +81,7 @@ def to_canonical(self):
     return st_can
 
 def is_finish(target):
-    children = target.nxst()
+    children = target.next_stage()
     for i in children:
         all_in = i.check_call()
         if all_in == 1 and target.depth%2 == 0:
