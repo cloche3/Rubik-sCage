@@ -5,7 +5,8 @@
         "nxway"
     ],
     "python.analysis.extraPaths": [
-        "DoNotTouchThisFolder"
+        "c/user/toshiki/anaconda3/lib/site-Packages/win32/lib"
     ],
     "python.jediEnabled": false
+
 }
