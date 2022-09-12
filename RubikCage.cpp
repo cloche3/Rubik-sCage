@@ -44,12 +44,13 @@ int update(){
                 BaseCage[e][t] == -1 && (BaseCage[e][t] = BaseCage[e + 1][t], BaseCage[e + 1][t] = -1), NextCage[e][t] == -1 && (NextCage[e][t] = NextCage[e + 1][t], NextCage[e + 1][t] = -1);
             }
         }
-    } 
+    }
+
 };
 
 int mem(){
-    std::stack<int> Stack;
-    std::stack<int> Nextstack;
+    //std::stack<int> Stack;
+    //std::stack<int> Nextstack;
     for (int e,
     N[3][8] = {
     {-1, -1, -1, -1, -1, -1, -1, -1},
@@ -63,8 +64,9 @@ int mem(){
     }, i = 0; i < 3 ; i++)
     {
         for (e = 0; e < 8; e++) N[i][e] = BaseCage[i][e], S[i][e] = NextCage[i][e];
-        Stack.push(N), NextCage.push(S);
+    Stack[8](N), Nextstack(S);
     }
+    
 };
 
 int put(int e){
@@ -136,4 +138,13 @@ int reset(){
     int Stack[] = {};
     int NextStack[] = {};
     update();   
+}
+
+int reach(){
+
+}
+
+int to_canonical(){
+    
+
 }
