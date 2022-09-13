@@ -68,7 +68,7 @@ int mem(){
         for (e = 0; e < 8; e++) N[i][e] = BaseCage[i][e], S[i][e] = NextCage[i][e];
     //Stack[null](N), NextStack(S);
     }
-    return e;
+    return 0;
 };
 
 int put(int e){
@@ -149,10 +149,9 @@ int reset(){
 }
 
 int reach(){
-
+    return 0;
 }
 
 int to_canonical(){
-
-
+    return 0;
 }
