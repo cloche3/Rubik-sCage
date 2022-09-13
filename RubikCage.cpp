@@ -1,21 +1,20 @@
 #include <iostream>
-#include <stdio.h>
 #include <limits.h>
 #include <map>
 #include <stack>
 
-using namespace std;
-signed char Mycolor= -1;
+//using namespace std;
+signed char Mycolor= 0;
 signed char Setcolor[6] = {1,2,3,4,5,6};
 int BaseCage[3][8] = {
-    {-1, -1, -1, -1, -1, -1, -1, -1},
-    {-1, -1, -1, -1, -1, -1, -1, -1},
-    {-1, -1, -1, -1, -1, -1, -1, -1}
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0}
     };
 int NextCage [3][8] = {
-    {-1, -1, -1, -1, -1, -1, -1, -1},
-    {-1, -1, -1, -1, -1, -1, -1, -1},
-    {-1, -1, -1, -1, -1, -1, -1, -1}
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0}
     };
 int Stack[] = {};
 int NextStack[] = {};
@@ -25,7 +24,7 @@ int Length;
 /*
 int set_color(void){
     map<signed char, string> colorbase;
-    colorbase[-1] = "null";
+    colorbase[0] = "null";
     colorbase[1] = "red";
     colorbase[2] = "blue";
     colorbase[3] = "orange";
@@ -35,19 +34,19 @@ int set_color(void){
 };
 */
 
-int update(){
+int fallcube(){
     for (int e,n,t=0; t < 8 ; t++)
     {
         for (n = 0; n < 2; n++)
         {
             for (e = 0; e < 2; e++)
             {
-                BaseCage[e][t] == -1 && (BaseCage[e][t] = BaseCage[e + 1][t], BaseCage[e + 1][t] = -1);
-                NextCage[e][t] == -1 && (NextCage[e][t] = NextCage[e + 1][t], NextCage[e + 1][t] = -1);
+                BaseCage[e][t] == 0 && (BaseCage[e][t] = BaseCage[e + 1][t], BaseCage[e + 1][t] = 0);
+                NextCage[e][t] == 0 && (NextCage[e][t] = NextCage[e + 1][t], NextCage[e + 1][t] = 0);
             }
         }
     }
-    return 0;
+    return void;
 };
 
 int mem(){
@@ -55,20 +54,20 @@ int mem(){
     //std::stack<int> Nextstack;
     for (int e,
     N[3][8] = {
-    {-1, -1, -1, -1, -1, -1, -1, -1},
-    {-1, -1, -1, -1, -1, -1, -1, -1},
-    {-1, -1, -1, -1, -1, -1, -1, -1}
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0}
     },
     S [3][8] = {
-    {-1, -1, -1, -1, -1, -1, -1, -1},
-    {-1, -1, -1, -1, -1, -1, -1, -1},
-    {-1, -1, -1, -1, -1, -1, -1, -1}
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0}
     }, i = 0; i < 3 ; i++)
     {
         for (e = 0; e < 8; e++) N[i][e] = BaseCage[i][e], S[i][e] = NextCage[i][e];
     //Stack[null](N), NextStack(S);
     }
-    return 0;
+    return void;
 };
 
 int put(int e){
@@ -79,7 +78,7 @@ int put(int e){
     mem();
     BaseCage[2][e - 1] = Mycolor;
     NextCage[2][e - 1] = Length;
-    update();
+    fallcube();
     return 0;
 };
 
@@ -127,25 +126,25 @@ int updown(){
         NextCage[0][e] = NextCage[2][e];
         NextCage[2][e] = t;
     }
-    update();
-    return 0;
+    fallcube();
+    return void;
 }
 
 int reset(){
     int BaseCage[3][8] = {
-    {-1, -1, -1, -1, -1, -1, -1, -1},
-    {-1, -1, -1, -1, -1, -1, -1, -1},
-    {-1, -1, -1, -1, -1, -1, -1, -1}
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0}
     };
     int NextCage [3][8] = {
-    {-1, -1, -1, -1, -1, -1, -1, -1},
-    {-1, -1, -1, -1, -1, -1, -1, -1},
-    {-1, -1, -1, -1, -1, -1, -1, -1}
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0}
     };
     int Stack[] = {};
     int NextStack[] = {};
-    update();
-    return 0;
+    fallcube();
+    return void;
 }
 
 int reach(){
