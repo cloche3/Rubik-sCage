@@ -2,7 +2,12 @@
     "cSpell.words": [
         "nxbl",
         "nxst",
-        "nxway"
+        "nxway",
+        "Mycolor",
+        "Setcolor",
+        "colorbase",
+        "Nextstack",
+        "updown"
     ],
     "python.analysis.extraPaths": [
         "c/user/toshiki/anaconda3/lib/site-Packages/win32/lib"

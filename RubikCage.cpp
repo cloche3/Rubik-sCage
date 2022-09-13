@@ -18,11 +18,12 @@ int NextCage [3][8] = {
     {-1, -1, -1, -1, -1, -1, -1, -1}
     };
 int Stack[] = {};
-int NextStack[] = {};   
+int NextStack[] = {};
+int Length;
 
 
 /*
-int set_color(void){    
+int set_color(void){
     map<signed char, string> colorbase;
     colorbase[-1] = "null";
     colorbase[1] = "red";
@@ -41,11 +42,12 @@ int update(){
         {
             for (e = 0; e < 2; e++)
             {
-                BaseCage[e][t] == -1 && (BaseCage[e][t] = BaseCage[e + 1][t], BaseCage[e + 1][t] = -1), NextCage[e][t] == -1 && (NextCage[e][t] = NextCage[e + 1][t], NextCage[e + 1][t] = -1);
+                BaseCage[e][t] == -1 && (BaseCage[e][t] = BaseCage[e + 1][t], BaseCage[e + 1][t] = -1);
+                NextCage[e][t] == -1 && (NextCage[e][t] = NextCage[e + 1][t], NextCage[e + 1][t] = -1);
             }
         }
     }
-
+    return 0;
 };
 
 int mem(){
@@ -64,9 +66,9 @@ int mem(){
     }, i = 0; i < 3 ; i++)
     {
         for (e = 0; e < 8; e++) N[i][e] = BaseCage[i][e], S[i][e] = NextCage[i][e];
-    Stack[8](N), Nextstack(S);
+    //Stack[null](N), NextStack(S);
     }
-    
+    return e;
 };
 
 int put(int e){
@@ -76,8 +78,9 @@ int put(int e){
     };
     mem();
     BaseCage[2][e - 1] = Mycolor;
-    NextCage[2][e - 1] = stack.length; 
+    NextCage[2][e - 1] = Length;
     update();
+    return 0;
 };
 
 int shift_left(int e){
@@ -91,7 +94,8 @@ int shift_left(int e){
     {
         NextCage[e][i] = NextCage[e][i + 1];
         NextCage[e][7] = n ;
-    }    
+    }
+    return 0;
 };
 
 int rotate_left(int e){
@@ -100,6 +104,7 @@ int rotate_left(int e){
     {
         shift_left(e);
     }
+    return 0;
 };
 
 int rotate_right(int e){
@@ -108,6 +113,7 @@ int rotate_right(int e){
     {
         shift_left(e);
     }
+    return 0;
 };
 
 int updown(){
@@ -121,7 +127,8 @@ int updown(){
         NextCage[0][e] = NextCage[2][e];
         NextCage[2][e] = t;
     }
-    update();    
+    update();
+    return 0;
 }
 
 int reset(){
@@ -137,7 +144,8 @@ int reset(){
     };
     int Stack[] = {};
     int NextStack[] = {};
-    update();   
+    update();
+    return 0;
 }
 
 int reach(){
@@ -145,6 +153,6 @@ int reach(){
 }
 
 int to_canonical(){
-    
+
 
 }
