@@ -7,7 +7,8 @@
         "Setcolor",
         "colorbase",
         "Nextstack",
-        "updown"
+        "updown",
+        "fallcube"
     ],
     "python.analysis.extraPaths": [
         "c/user/toshiki/anaconda3/lib/site-Packages/win32/lib"

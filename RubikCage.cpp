@@ -126,7 +126,7 @@ int updown(){
         NextCage[2][e] = t;
     }
     fallcube();
-    return void;
+    return;
 }
 
 int reset(){
