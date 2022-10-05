@@ -13,7 +13,7 @@ const int height = 3;   // ケージの高さ
 const int length_of_edge = 3;   // ケージを上から見た正方形の一辺の長さ
 const int num_positions = length_of_edge * 2 + (length_of_edge - 2) * 2;    // 上から見た、ブロックを入れる穴の数。一辺の長さが3のときは8
 
-int** copy(const int ** cage){
+int** copy(/*const*/int** cage){
     int **new_cage; // コピー先の盤面
     new_cage = new int*[height];
     for (int i = 0; i < height; i++) {
