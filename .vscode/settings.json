@@ -8,7 +8,10 @@
         "colorbase",
         "Nextstack",
         "updown",
-        "fallcube"
+        "fallcube",
+        "putcube",
+        "flippoint",
+        "cubeslide"
     ],
     "python.analysis.extraPaths": [
         "c/user/toshiki/anaconda3/lib/site-Packages/win32/lib"

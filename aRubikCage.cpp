@@ -1,122 +1,181 @@
 #include <iostream>
 #include <map>
 
-//using namespace std;
+/*
+
+cage[i][j] i段目　左上から右回りに通るマスj個目
+
+
+*/
+
+
+const int height = 3;   // ケージの高さ
+const int length_of_edge = 3;   // ケージを上から見た正方形の一辺の長さ
+const int num_positions = length_of_edge * 2 + (length_of_edge - 2) * 2;    // 上から見た、ブロックを入れる穴の数。一辺の長さが3のときは8
+
+int** copy(const int ** cage){
+    int **new_cage; // コピー先の盤面
+    new_cage = new int*[height];
+    for (int i = 0; i < height; i++) {
+        *new_cage = new int[num_positions];
+    }
+
+    //盤面のコピー
+    for (int i = 0; i < height ; i++) {
+        for (int j = 0; j < num_positions; j++) new_cage[i][j] = cage[i][j];
+    }
+
+    return new_cage;
+};
+
 
 void fallcube(int **cage){//キューブを下に落とす
-    for (int e,n,t=0; t < 8 ; t++)
+    for (int j=0; j < num_positions ; j++)
     {
-        for (n = 0; n < 2; n++)
+        for (int under = 0; under < 2; under++)
         {
-            for (e = 0; e < 2; e++)
+            for (int i = 0; i < 2; i++)//1,2段のみ
             {
-                cage[e][t] == 0 && (cage[e][t] = cage[e + 1][t], cage[e + 1][t] = 0);//下に落とす
+                cage[i][j] == 0 && (cage[i][j] = cage[i + 1][j], cage[i + 1][j] = 0);//下に落とす
             }
         }
     }
-    return cage;////コピーせず今の盤面を上書き（変更後の盤面）
+    return;////コピーせず今の盤面を上書き（変更後の盤面）
 };
 
-int mem(const int ** cage){
-    int N[3][8] = {
-    {0, 0, 0, 0, 0, 0, 0, 0},//N[i][j] i段目　左上から右回りに通るマスj個目
-    {0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0}
-    };
-    for (int e,i = 0; i < 3 ; i++)
-    {
-        for (e = 0; e < 8; e++) {N[i][e] = cage[i][e];}//盤面のコピー
-    }
 
-    return N;//コピーした変数
-};
-
-int put(int ** cage,signed char mycolor,signed char e){//e入力変数（マス数2~9）mycolor入力変数(色数1~6(減らすと1~4))
-    if (cage[2][e -1] != -1 || mycolor == -1)//エラー確認
+int put(int ** cage,signed char color,signed char putcube){//putcubeキューブを入れる（1段のマス数1~8）color入れる色(色数1~6(減らすと1~4))
+    if (cage[3][putcube] != 0 || color == 0)//エラー確認
     {
         return 0;//値なし
     };
-    mem(cage);//記録
-    cage[2][e - 1] = mycolor;//入力された場所に指定された色のキューブを入れる
+    copy(cage);//記録
+    cage[2][putcube] = color;//入力された場所に指定された色のキューブを入れる
     fallcube(cage);//重力
-    return 0;//cage;//変更後の盤面
+    return ;//cage;//変更後の盤面
 };
 
-int * flip(int ** cage/*,signed char e　サイズエラー*/){//e入力変数(段数1~3)
-    int e;//仮置き
-    for (int n = cage[e][0],i; i < 7; i++)
+void flip(int ** cage,signed char flippoint){//flippoint横にずらす場所決め(段数1~3)
+    for (int stack = cage[flippoint][0],cubeslide; cubeslide < 7; cubeslide++)
     {
-        cage[e][i] = cage[e][i + 1];
-        cage[e][7] = n;
-        n = cage[e][0];//1段全体的に1行ずらす
+        cage[flippoint][cubeslide] = cage[flippoint][cubeslide + 1];
+        cage[flippoint][7] = stack;
+        stack = cage[flippoint][0];//i段全体的に1行ずらす
     }
-    return 0;//cage;//変更後の盤面
+    return;//変更後の盤面
 };
 
-void rotate_left(int ** cage){
-    mem(cage);//記録
-    for (int i = 0; i < 2; i++)//右回転
+int** rotate_left(int ** cage,signed char flippoint){
+    copy(cage);//記録
+    for (int count = 0; count < 2; count++)//右回転
     {
-        flip(cage);//3回ずらす
+        flip(cage,flippoint);//3回ずらす
     }
     fallcube(cage);//重力
-    return;//cage;//変更後の盤面
+    return cage;//変更後の盤面
 };
 
-void rotate_right(int ** cage){
-    mem(cage);//記録
-    for (int i = 0; i < 6; i++)//左回転
+int** rotate_right(int ** cage,signed char flippoint){
+    copy(cage);//記録
+    for (int count = 0; count < 6; count++)//左回転
     {
-        flip(cage);//7回ずらす
+        flip(cage,flippoint);//7回ずらす
     }
     fallcube(cage);//重力
-    return;//cage;//変更後の盤面
+    return cage;//変更後の盤面
 };
 
-void updown(int ** cage){
-    mem(cage);//記録
-    for (int t,e = 0; e < 8; e++)
+int** updown(int ** cage){
+    copy(cage);//記録
+    for (int stack,j = 0; j < num_positions; j++)
     {
-        t = cage[0][e];
-        cage[0][e] = cage[2][e];
-        cage[2][e] = t;//上下入れ替え
+        stack = cage[0][j];
+        cage[0][j] = cage[2][j];
+        cage[2][j] = stack;//上下入れ替え
     }
     fallcube(cage);//重力
-    return;//cage;//変更後の盤面提示
+    return cage;//変更後の盤面提示
 }
 
-int reset(int ** cage){
-    int reset_cage [3][8] = {
-    {0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0}
-    };
-    for (int e,i = 0; i < 3 ; i++)
-    {
-        for (e = 0; e < 8; e++) {reset_cage[i][e] = cage[i][e];}
+int **reset(int ** cage){
+    int **reset_cage; // コピー元の盤面
+    reset_cage = new int*[height];
+    for (int i = 0; i < height; i++) {
+        *reset_cage = new int[num_positions];
     }
-    return 0;
+
+    //盤面の上書き
+    for (int i = 0; i < height ; i++) {
+        for (int j = 0; j < num_positions; j++) cage[i][j] = reset_cage[i][j];
+    }
+    return cage;//初期化された盤面
 }
 
-int ** reach(const int ** cage){
+bool reach(const int ** cage){
+    for (int i = 0; i < height; i++)//i段数横リーチ判定
+    {
+        if (((cage[i][1] == cage[i][2] && cage[i][3] == 0)|| (cage[i][2] == cage[i][3] && cage[i][1] == 0)) && cage[i][2] != 0 )
+        //横に|赤|赤|空|or |空|赤|赤|の時1枚目
+        {
+            if (i = 2 && cage[i-1][1] != 0 && cage[i-1][2] != 0 && cage[i-1][3] != 0)//1段目が空いていない状態
+            {
+                return true;
+            }
+            return true;
+        }
+        if (cage[i][1] == cage[i][3] && cage[i][1] != 0 && cage[i][3] != 0 && cage[i][2] == 0)//横に|赤|空|赤|の時
+        {
+            return true;
+        }
 
-    return 0;
+        if (((cage[i][3] == cage[i][4] && cage[i][5] == 0)|| (cage[i][4] == cage[i][5] && cage[i][3] == 0)) && cage[i][4] != 0 )
+        //横に|赤|赤|空|or |空|赤|赤|の時2枚目
+        {
+            return true;
+        }
+        if (cage[i][3] == cage[i][5] && cage[i][3] != 0 && cage[i][5] != 0 && cage[i][4] == 0)//横に|赤|空|赤|の時
+        {
+            return true;
+        }
+
+        if (((cage[i][5] == cage[i][6] && cage[i][7] == 0)|| (cage[i][6] == cage[i][7] && cage[i][5] == 0)) && cage[i][6] != 0 )
+        //横に|赤|赤|空|or |空|赤|赤|の時3枚目
+        {
+            return true;
+        }
+        if (cage[i][5] == cage[i][7] && cage[i][5] != 0 && cage[i][7] != 0 && cage[i][6] == 0)//横に|赤|空|赤|の時
+        {
+            return true;
+        }
+
+        if (((cage[i][7] == cage[i][8] && cage[i][1] == 0)|| (cage[i][8] == cage[i][1] && cage[i][7] == 0)) && cage[i][8] != 0 )
+        //横に|赤|赤|空|or |空|赤|赤|の時4枚目
+        {
+            return true;
+        }
+        if (cage[i][7] == cage[i][1] && cage[i][7] != 0 && cage[i][1] != 0 && cage[i][8] == 0)//横に|赤|空|赤|の時
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 int ** to_canonical(const int ** cage){
-    int min_cage[3][8]={
-    {0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0}
-    };
-    for (int e,i = 0; i < 3 ; i++)
-    {
-        for (e = 0; e < 8; e++) {min_cage[i][e] = cage[i][e];}//コピー
+    int **min_cage; // コピー先の盤面
+    min_cage = new int*[height];
+    for (int i = 0; i < height; i++) {
+        *min_cage = new int[num_positions];
     }
-    for (int i = 0; i < 4; i++)//8状態を保存
+    for (int e,i = 0; i < height ; i++)
+    {
+        for (int j = 0; j < num_positions; j++)min_cage[i][j] = cage[i][j];//コピー
+    }
+    for (int board = 0; board < 4; board++)//8状態を保存
     {
         /* code */
     }
 
-    return 0;//min_cage;//標準形
+    return min_cage;//標準形
 }
