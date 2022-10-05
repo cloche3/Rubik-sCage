@@ -30,12 +30,9 @@ int** copy(const int ** cage){
 
 
 void fallcube(int **cage){//キューブを下に落とす
-    for (int j=0; j < num_positions ; j++)
-    {
-        for (int under = 0; under < 2; under++)
-        {
-            for (int i = 0; i < 2; i++)//1,2段のみ
-            {
+    for (int j=0; j < num_positions ; j++){
+        for (int under = 0; under < 2; under++){
+            for (int i = 0; i < 2; i++){//1,2段のみ
                 cage[i][j] == 0 && (cage[i][j] = cage[i + 1][j], cage[i + 1][j] = 0);//下に落とす
             }
         }
@@ -44,20 +41,18 @@ void fallcube(int **cage){//キューブを下に落とす
 };
 
 
-int put(int ** cage,signed char color,signed char putcube){//putcubeキューブを入れる（1段のマス数1~8）color入れる色(色数1~6(減らすと1~4))
-    if (cage[3][putcube] != 0 || color == 0)//エラー確認
-    {
+int** put(int** cage,signed char color,signed char putcube){//putcubeキューブを入れる（1段のマス数1~8）color入れる色(色数1~6(減らすと1~4))
+    if (cage[3][putcube] != 0 || color == 0){//エラー確認
         return 0;//値なし
     };
     copy(cage);//記録
     cage[2][putcube] = color;//入力された場所に指定された色のキューブを入れる
     fallcube(cage);//重力
-    return ;//cage;//変更後の盤面
+    return cage;//変更後の盤面
 };
 
 void flip(int ** cage,signed char flippoint){//flippoint横にずらす場所決め(段数1~3)
-    for (int stack = cage[flippoint][0],cubeslide; cubeslide < 7; cubeslide++)
-    {
+    for (int stack = cage[flippoint][0],cubeslide; cubeslide < 7; cubeslide++){
         cage[flippoint][cubeslide] = cage[flippoint][cubeslide + 1];
         cage[flippoint][7] = stack;
         stack = cage[flippoint][0];//i段全体的に1行ずらす
@@ -67,8 +62,7 @@ void flip(int ** cage,signed char flippoint){//flippoint横にずらす場所決
 
 int** rotate_left(int ** cage,signed char flippoint){
     copy(cage);//記録
-    for (int count = 0; count < 2; count++)//右回転
-    {
+    for (int count = 0; count < 2; count++){//右回転
         flip(cage,flippoint);//3回ずらす
     }
     fallcube(cage);//重力
@@ -77,8 +71,7 @@ int** rotate_left(int ** cage,signed char flippoint){
 
 int** rotate_right(int ** cage,signed char flippoint){
     copy(cage);//記録
-    for (int count = 0; count < 6; count++)//左回転
-    {
+    for (int count = 0; count < 6; count++){//左回転
         flip(cage,flippoint);//7回ずらす
     }
     fallcube(cage);//重力
@@ -87,8 +80,7 @@ int** rotate_right(int ** cage,signed char flippoint){
 
 int** updown(int ** cage){
     copy(cage);//記録
-    for (int stack,j = 0; j < num_positions; j++)
-    {
+    for (int stack,j = 0; j < num_positions; j++){
         stack = cage[0][j];
         cage[0][j] = cage[2][j];
         cage[2][j] = stack;//上下入れ替え
@@ -103,7 +95,6 @@ int **reset(int ** cage){
     for (int i = 0; i < height; i++) {
         *reset_cage = new int[num_positions];
     }
-
     //盤面の上書き
     for (int i = 0; i < height ; i++) {
         for (int j = 0; j < num_positions; j++) cage[i][j] = reset_cage[i][j];
@@ -112,49 +103,39 @@ int **reset(int ** cage){
 }
 
 bool reach(const int ** cage){
-    for (int i = 0; i < height; i++)//i段数横リーチ判定
-    {
-        if (((cage[i][1] == cage[i][2] && cage[i][3] == 0)|| (cage[i][2] == cage[i][3] && cage[i][1] == 0)) && cage[i][2] != 0 )
+    for (int i = 0; i < height; i++){//i段数横リーチ判定
+        if (((cage[i][1] == cage[i][2] && cage[i][3] == 0)|| (cage[i][2] == cage[i][3] && cage[i][1] == 0)) && cage[i][2] != 0){
         //横に|赤|赤|空|or |空|赤|赤|の時1枚目
-        {
-            if (i = 2 && cage[i-1][1] != 0 && cage[i-1][2] != 0 && cage[i-1][3] != 0)//1段目が空いていない状態
-            {
+            if (i = 2 && cage[i-1][1] != 0 && cage[i-1][2] != 0 && cage[i-1][3] != 0){//1段目が空いていない状態
                 return true;
             }
             return true;
         }
-        if (cage[i][1] == cage[i][3] && cage[i][1] != 0 && cage[i][3] != 0 && cage[i][2] == 0)//横に|赤|空|赤|の時
-        {
+        if (cage[i][1] == cage[i][3] && cage[i][1] != 0 && cage[i][3] != 0 && cage[i][2] == 0){//横に|赤|空|赤|の時
             return true;
         }
 
-        if (((cage[i][3] == cage[i][4] && cage[i][5] == 0)|| (cage[i][4] == cage[i][5] && cage[i][3] == 0)) && cage[i][4] != 0 )
-        //横に|赤|赤|空|or |空|赤|赤|の時2枚目
-        {
+        if (((cage[i][3] == cage[i][4] && cage[i][5] == 0)|| (cage[i][4] == cage[i][5] && cage[i][3] == 0)) && cage[i][4] != 0 ){
+        //2枚目
             return true;
         }
-        if (cage[i][3] == cage[i][5] && cage[i][3] != 0 && cage[i][5] != 0 && cage[i][4] == 0)//横に|赤|空|赤|の時
-        {
-            return true;
-        }
-
-        if (((cage[i][5] == cage[i][6] && cage[i][7] == 0)|| (cage[i][6] == cage[i][7] && cage[i][5] == 0)) && cage[i][6] != 0 )
-        //横に|赤|赤|空|or |空|赤|赤|の時3枚目
-        {
-            return true;
-        }
-        if (cage[i][5] == cage[i][7] && cage[i][5] != 0 && cage[i][7] != 0 && cage[i][6] == 0)//横に|赤|空|赤|の時
-        {
+        if (cage[i][3] == cage[i][5] && cage[i][3] != 0 && cage[i][5] != 0 && cage[i][4] == 0){
             return true;
         }
 
-        if (((cage[i][7] == cage[i][8] && cage[i][1] == 0)|| (cage[i][8] == cage[i][1] && cage[i][7] == 0)) && cage[i][8] != 0 )
-        //横に|赤|赤|空|or |空|赤|赤|の時4枚目
-        {
+        if (((cage[i][5] == cage[i][6] && cage[i][7] == 0)|| (cage[i][6] == cage[i][7] && cage[i][5] == 0)) && cage[i][6] != 0 ){
+        //3枚目
             return true;
         }
-        if (cage[i][7] == cage[i][1] && cage[i][7] != 0 && cage[i][1] != 0 && cage[i][8] == 0)//横に|赤|空|赤|の時
-        {
+        if (cage[i][5] == cage[i][7] && cage[i][5] != 0 && cage[i][7] != 0 && cage[i][6] == 0){
+            return true;
+        }
+
+        if (((cage[i][7] == cage[i][8] && cage[i][1] == 0)|| (cage[i][8] == cage[i][1] && cage[i][7] == 0)) && cage[i][8] != 0 ){
+        //4枚目
+            return true;
+        }
+        if (cage[i][7] == cage[i][1] && cage[i][7] != 0 && cage[i][1] != 0 && cage[i][8] == 0){
             return true;
         }
     }
@@ -168,12 +149,10 @@ int ** to_canonical(const int ** cage){
     for (int i = 0; i < height; i++) {
         *min_cage = new int[num_positions];
     }
-    for (int e,i = 0; i < height ; i++)
-    {
+    for (int e,i = 0; i < height ; i++){
         for (int j = 0; j < num_positions; j++)min_cage[i][j] = cage[i][j];//コピー
     }
-    for (int board = 0; board < 4; board++)//8状態を保存
-    {
+    for (int board = 0; board < 4; board++){//8状態を保存
         /* code */
     }
 
