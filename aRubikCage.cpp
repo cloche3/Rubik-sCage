@@ -250,3 +250,9 @@ int ** to_canonical(const int ** cage){
 
     return min_cage;//標準形
 }
+
+int main (int argc, char *argv[])
+{
+   // main program here
+   return 0;
+}
