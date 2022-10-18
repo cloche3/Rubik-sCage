@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include <map>
 
 /*
@@ -112,8 +113,7 @@ int **reset(int ** cage){
 
 bool reach(const int ** cage){
     for (int j = 0; j < num_positions; j++){//j個目縦リーチ判定
-        if (cage[1][j] == cage[2][j]) //縦に赤|赤|空の時
-        {
+        if (cage[1][j] == cage[2][j]){ //縦に赤|赤|空の時
             return true;
         }
     }
@@ -224,6 +224,14 @@ bool reach(const int ** cage){
         }
     }
 
+    if (cage[1][2] != 0 || cage[1][4] != 0 || cage[1][6] != 0 || cage[1][8] != 0){//斜めの時真ん中1段目は必ずブロックが存在する
+        if (cage[2][1] != 0 || cage[2][3] != 0 || cage[2][5] != 0 || cage[2][7] != 0)
+        {
+        }
+
+    }
+
+
     return false;
 }
 
@@ -233,7 +241,7 @@ int ** to_canonical(const int ** cage){
     for (int i = 0; i < height; i++) {
         *min_cage = new int[num_positions];
     }
-    for (int e,i = 0; i < height ; i++){
+    for (int i = 0; i < height ; i++){
         for (int j = 0; j < num_positions; j++)min_cage[i][j] = cage[i][j];//コピー
     }
     for (int board = 0; board < 4; board++){//8状態を保存
