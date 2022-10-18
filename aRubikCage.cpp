@@ -4,8 +4,11 @@
 /*
 
 cage[i][j] i段目　左上から右回りに通るマスj個目
-
-
+1 | 2 | 3
+8 | x | 4
+7 | 6 | 5
+組み合わせとして
+(1,2,3)1枚目　(3,4,5)　2枚目　(5,6,7) 3枚目　(7,8,1) 4枚目　とする
 */
 
 
@@ -106,36 +109,76 @@ bool reach(const int ** cage){
     for (int i = 0; i < height; i++){//i段数横リーチ判定
         if (((cage[i][1] == cage[i][2] && cage[i][3] == 0)|| (cage[i][2] == cage[i][3] && cage[i][1] == 0)) && cage[i][2] != 0){
         //横に|赤|赤|空|or |空|赤|赤|の時1枚目
-            if (i = 2 && cage[i-1][1] != 0 && cage[i-1][2] != 0 && cage[i-1][3] != 0){//1段目が空いていない状態
-                return true;
-            }
             return true;
         }
         if (cage[i][1] == cage[i][3] && cage[i][1] != 0 && cage[i][3] != 0 && cage[i][2] == 0){//横に|赤|空|赤|の時
             return true;
+        }
+        if (i = 2 && cage[i-1][1] != 0 && cage[i-1][2] != 0 && cage[i-1][3] != 0){//1段目が空いていない状態
+            if (((cage[i][1] == cage[i][2] && cage[i][3] == 0)|| (cage[i][2] == cage[i][3] && cage[i][1] == 0)) && cage[i][2] != 0){
+            //横に|赤|赤|空|or |空|赤|赤|の時
+                return true;
+            }
+            if (cage[i][1] == cage[i][3] && cage[i][1] != 0 && cage[i][3] != 0 && cage[i][2] == 0){//横に|赤|空|赤|の時
+                return true;
+            }
         }
 
         if (((cage[i][3] == cage[i][4] && cage[i][5] == 0)|| (cage[i][4] == cage[i][5] && cage[i][3] == 0)) && cage[i][4] != 0 ){
         //2枚目
             return true;
         }
-        if (cage[i][3] == cage[i][5] && cage[i][3] != 0 && cage[i][5] != 0 && cage[i][4] == 0){
+        if (cage[i][3] == cage[i][5] && cage[i][3] != 0 && cage[i][5] != 0 && cage[i][4] == 0){//横に|赤|空|赤|の時
             return true;
+        }
+        if (i = 2 && cage[i-1][3] != 0 && cage[i-1][4] != 0 && cage[i-1][5] != 0){//1段目が空いていない状態
+            if (((cage[i][3] == cage[i][4] && cage[i][5] == 0)|| (cage[i][4] == cage[i][5] && cage[i][3] == 0)) && cage[i][4] != 0 ){
+            //横に|赤|赤|空|or |空|赤|赤|の時
+            return true;
+            }
+            if (cage[i][3] == cage[i][5] && cage[i][3] != 0 && cage[i][5] != 0 && cage[i][4] == 0){//横に|赤|空|赤|の時
+            return true;
+            }
         }
 
         if (((cage[i][5] == cage[i][6] && cage[i][7] == 0)|| (cage[i][6] == cage[i][7] && cage[i][5] == 0)) && cage[i][6] != 0 ){
         //3枚目
             return true;
         }
-        if (cage[i][5] == cage[i][7] && cage[i][5] != 0 && cage[i][7] != 0 && cage[i][6] == 0){
+        if (cage[i][5] == cage[i][7] && cage[i][5] != 0 && cage[i][7] != 0 && cage[i][6] == 0){//横に|赤|空|赤|の時
             return true;
+        }
+        if (i = 2 && cage[i-1][5] != 0 && cage[i-1][6] != 0 && cage[i-1][7] != 0){//1段目が空いていない状態
+            if (((cage[i][5] == cage[i][6] && cage[i][7] == 0)|| (cage[i][6] == cage[i][7] && cage[i][5] == 0)) && cage[i][6] != 0 ){
+            //横に|赤|赤|空|or |空|赤|赤|の時
+                return true;
+            }
+            if (cage[i][5] == cage[i][7] && cage[i][5] != 0 && cage[i][7] != 0 && cage[i][6] == 0){//横に|赤|空|赤|の時
+                return true;
+            }
         }
 
         if (((cage[i][7] == cage[i][8] && cage[i][1] == 0)|| (cage[i][8] == cage[i][1] && cage[i][7] == 0)) && cage[i][8] != 0 ){
         //4枚目
             return true;
         }
-        if (cage[i][7] == cage[i][1] && cage[i][7] != 0 && cage[i][1] != 0 && cage[i][8] == 0){
+        if (cage[i][7] == cage[i][1] && cage[i][7] != 0 && cage[i][1] != 0 && cage[i][8] == 0){//横に|赤|空|赤|の時
+            return true;
+        }
+        if (i = 2 && cage[i-1][5] != 0 && cage[i-1][6] != 0 && cage[i-1][7] != 0){//1段目が空いていない状態
+            if (((cage[i][7] == cage[i][8] && cage[i][1] == 0)|| (cage[i][8] == cage[i][1] && cage[i][7] == 0)) && cage[i][8] != 0 ){
+            //横に|赤|赤|空|or |空|赤|赤|の時
+                return true;
+            }
+            if (cage[i][7] == cage[i][1] && cage[i][7] != 0 && cage[i][1] != 0 && cage[i][8] == 0){//横に|赤|空|赤|の時
+                return true;
+            }
+        }
+    }
+
+    for (int j = 0; j < num_positions; j++){//j個目縦リーチ判定
+        if (cage[1][j] == cage[2][j])
+        {
             return true;
         }
     }
