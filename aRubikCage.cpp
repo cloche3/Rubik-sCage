@@ -328,13 +328,43 @@ signed char putreach(const int ** cage,signed char color,signed char putcube){
             }
         }
     }
-
-    if (cage[1][2] != 0 || cage[1][4] != 0 || cage[1][6] != 0 || cage[1][8] != 0){//斜めの時真ん中1段目は必ずブロックが存在する
-        if (cage[2][1] != 0 || cage[2][3] != 0 || cage[2][5] != 0 || cage[2][7] != 0)
-        {
+//斜めの時真ん中1段目は必ずブロックが存在する
+    if (cage[1][2] != 0 && cage[2][1] != 0){//右上がり1枚目
+        if (cage[2][2] == cage[3][3] && cage[2][2] != 0 && cage[1][1] == 0){//3段目にある
+            putcube = 1;
+            color = cage[2][2];
+            return putcube,color;
         }
-
+        if (cage[2][2] == cage[1][1] && cage[2][2] != 0 && cage[3][3] == 0){//3段目にない
+            putcube = 3;
+            color = cage[2][2];
+            return putcube,color;
+        }
+        if (cage[3][3] == cage[1][1] && cage[2][2] == 0 && cage[3][3] != 0){//真ん中にない
+            putcube = 2;
+            color = cage[1][1];
+            return putcube,color;
+        }
     }
+    if (cage[1][2] != 0 && cage[2][3] != 0){//左上上がり
+        if (cage[2][2] == cage[3][1] && cage[2][2] != 0 && cage[1][3] == 0){//3段目にある
+            putcube = 3;
+            color = cage[2][2];
+            return putcube,color;
+        }
+        if (cage[2][2] == cage[1][3] && cage[2][2] != 0 && cage[3][1] == 0){//3段目にない
+            putcube = 1;
+            color = cage[2][2];
+            return putcube,color;
+        }
+        if (cage[3][1] == cage[1][3] && cage[2][2] == 0 && cage[3][1] != 0){//3段目にない
+            putcube = 2;
+            color = cage[3][1];
+            return putcube,color;
+        }
+    }
+
+
 }
 
 signed char flipreach(const int ** cage, signed char flippoint){
