@@ -11,7 +11,10 @@
         "fallcube",
         "putcube",
         "flippoint",
-        "cubeslide"
+        "cubeslide",
+        "putreach",
+        "flipreach",
+        "updownreach"
     ],
     "python.analysis.extraPaths": [
         "c/user/toshiki/anaconda3/lib/site-Packages/win32/lib"

@@ -11,12 +11,13 @@ flip/ cage,flippoint/ 0/ 1行右にずらす
 
 
 引数argument
-cage[i][j] i段目(1~3)　左上から右回りに通るマスj個目
+cage[i][j] i段目(1~3)　左上から右回りに通るマスj個目　下表は上から見た穴
 1 | 2 | 3
 8 | x | 4
 7 | 6 | 5
 組み合わせとして
 (1,2,3)1枚目　(3,4,5)　2枚目　(5,6,7) 3枚目　(7,8,1) 4枚目　とする
+値が小さい方向が左、値が大きい方向が右
 color 色数(1~6)
 putcube ブロックを入れる時の穴決定(1~8)
 flippoint ケージを回転させる段決定(1~3)
@@ -328,8 +329,8 @@ signed char putreach(const int ** cage,signed char color,signed char putcube){
             }
         }
     }
-//斜めの時真ん中1段目は必ずブロックが存在する
-    if (cage[1][2] != 0 && cage[2][1] != 0){//右上がり1枚目
+    //斜めの時真ん中1段目は必ずブロックが存在する
+    /* if (cage[1][2] != 0 && cage[2][1] != 0){//左上がり1枚目
         if (cage[2][2] == cage[3][3] && cage[2][2] != 0 && cage[1][1] == 0){//3段目にある
             putcube = 1;
             color = cage[2][2];
@@ -346,7 +347,7 @@ signed char putreach(const int ** cage,signed char color,signed char putcube){
             return putcube,color;
         }
     }
-    if (cage[1][2] != 0 && cage[2][3] != 0){//左上上がり
+    if (cage[1][2] != 0 && cage[2][3] != 0){//右上上がり
         if (cage[2][2] == cage[3][1] && cage[2][2] != 0 && cage[1][3] == 0){//3段目にある
             putcube = 3;
             color = cage[2][2];
@@ -357,19 +358,284 @@ signed char putreach(const int ** cage,signed char color,signed char putcube){
             color = cage[2][2];
             return putcube,color;
         }
-        if (cage[3][1] == cage[1][3] && cage[2][2] == 0 && cage[3][1] != 0){//3段目にない
+        if (cage[3][1] == cage[1][3] && cage[2][2] == 0 && cage[3][1] != 0){//真ん中にない
             putcube = 2;
             color = cage[3][1];
             return putcube,color;
         }
+    } */
+
+    for (int t = 0; t < 6; t += 2){//1～3枚目
+        if (cage[1][2+t] != 0 && cage[2][1+t] != 0){//左上がり
+            if (cage[2][2+t] == cage[3][3+t] && cage[2][2+t] != 0 && cage[1][1+t] == 0){//3段目にある
+                putcube = 1+t;
+                color = cage[2][2+t];
+                return putcube,color;
+            }
+            if (cage[2][2+t] == cage[1][1+t] && cage[2][2+t] != 0 && cage[3][3+t] == 0){//3段目にない
+                putcube = 3+t;
+                color = cage[2][2+t];
+                return putcube,color;
+            }
+            if (cage[3][3+t] == cage[1][1+t] && cage[2][2+t] == 0 && cage[3][3+t] != 0){//真ん中にない
+                putcube = 2 +t;
+                color = cage[1][1+t];
+                return putcube,color;
+            }
+        }
+        if (cage[1][2+t] != 0 && cage[2][3+t] != 0){//右上上がり
+            if (cage[2][2+t] == cage[3][1+t] && cage[2][2+t] != 0 && cage[1][3+t] == 0){//3段目にある
+                putcube = 3+t;
+                color = cage[2][2+t];
+                return putcube,color;
+            }
+            if (cage[2][2+t] == cage[1][3+t] && cage[2][2+t] != 0 && cage[3][1+t] == 0){//3段目にない
+                putcube = 1+t;
+                color = cage[2][2+t];
+                return putcube,color;
+            }
+            if (cage[3][1+t] == cage[1][3+t] && cage[2][2+t] == 0 && cage[3][1+t] != 0){//真ん中にない
+                putcube = 2+t;
+                color = cage[3][1+t];
+                return putcube,color;
+            }
+        }
     }
-
-
+    if (cage[1][8] != 0 && cage[2][7] != 0){//左上がり4枚目
+        if (cage[2][8] == cage[3][1] && cage[2][8] != 0 && cage[1][7] == 0){//3段目にある
+            putcube = 7;
+            color = cage[2][8];
+            return putcube,color;
+        }
+        if (cage[2][8] == cage[1][7] && cage[2][8] != 0 && cage[3][1] == 0){//3段目にない
+            putcube = 1;
+            color = cage[2][2];
+            return putcube,color;
+        }
+        if (cage[3][1] == cage[1][7] && cage[2][8] == 0 && cage[3][1] != 0){//真ん中にない
+            putcube = 8;
+            color = cage[1][1];
+            return putcube,color;
+        }
+    }
+    if (cage[1][8] != 0 && cage[2][1] != 0){//右上上がり
+        if (cage[2][8] == cage[3][7] && cage[2][8] != 0 && cage[1][1] == 0){//3段目にある
+            putcube = 1;
+            color = cage[2][8];
+            return putcube,color;
+        }
+        if (cage[2][8] == cage[1][1] && cage[2][8] != 0 && cage[3][7] == 0){//3段目にない
+            putcube = 7;
+            color = cage[2][8];
+            return putcube,color;
+        }
+        if (cage[3][7] == cage[1][1] && cage[2][8] == 0 && cage[3][7] != 0){//真ん中にない
+            putcube = 8;
+            color = cage[3][7];
+            return putcube,color;
+        }
+    }
+    return putcube,color;
 }
 
 signed char flipreach(const int ** cage, signed char flippoint){
+    for (int t = 0; t < 6; t+=2){//1~3枚目
+        /* code */
+    }
+
 
     return flippoint;
+}
+
+bool updownreach(const int ** cage){
+    /* //1枚目
+    if (cage[1][1] == cage[1][3] == cage[2][2] || cage[2][1] == cage[2][3] == cage[3][2] == 0){//山の形
+        return true;
+    }
+    if (cage[1][1] == cage[3][3] == cage[2][2] || cage[2][1] == cage[3][2] == 0){//真ん中が高い山の形
+        return true;
+    }
+    if (cage[2][1] == cage[2][3] == cage[3][2] || cage[3][1] == cage[3][3]  == 0){//1段目が埋まった山の形
+        return true;
+    }
+    if (cage[2][1] == cage[1][2] == cage[2][3] || cage[3][1] == cage[3][3] == cage[2][2] == 0){//谷の形
+        return true;
+    }
+    if (cage[3][1] == cage[1][2] == cage[3][3] || cage[2][2] == 0){//真ん中が深い谷の形
+        return true;
+    }
+    if (cage[3][1] == cage[2][2] == cage[3][3] || cage[3][2] == 0){//1段目が埋まった谷の形
+        return true;
+    }
+
+    if (cage[1][1] == cage[1][2] == cage[2][3] || cage[2][1] == cage[2][2] == cage[3][3] == 0){//左寄りに2つ並び、1つ1段上にある形
+        return true;
+    }
+    if (cage[1][1] == cage[1][2] == cage[3][3] || cage[2][1] == cage[2][2] == 0){//左寄りに2つ並び、1つ2段上にある形（反転L字型）
+        return true;
+    }
+    if (cage[2][1] == cage[2][2] == cage[3][3] || cage[3][1] == cage[3][2] == 0){//1段目が埋まった左寄りに2つ並び、1つ上にある形
+        return true;
+    }
+    if (cage[2][1] == cage[2][2] == cage[1][3] || cage[3][1] == cage[3][2] == cage[2][3] == 0){//左寄りに2つ並び、1つ1段下にある形
+        return true;
+    }
+    if (cage[3][1] == cage[3][2] == cage[1][3] || cage[2][3] == 0){//左寄りに2つ並び、1つ2段下にある形
+        return true;
+    }
+    if (cage[3][1] == cage[3][2] == cage[2][3] || cage[3][3] == 0){//1段目が埋まった左寄りに2つ並び、1つ下にある形
+        return true;
+    }
+    if (cage[2][1] == cage[1][2] == cage[1][3] || cage[3][1] == cage[2][2] == cage[2][3] == 0){//右寄りに2つ並び1つ1段上にある形
+        return true;
+    }
+    if (cage[3][1] == cage[1][2] == cage[1][3] || cage[2][2] == cage[2][3] == 0){//右寄りに2つ並び1つ2段上にある形(L字型)
+        return true;
+    }
+    if (cage[3][1] == cage[2][2] == cage[2][3] || cage[3][2] == cage[3][3] == 0){//1段目が埋まった右寄りに2つ並び1つ上にある形
+        return true;
+    }
+    if (cage[1][1] == cage[2][2] == cage[2][3] || cage[2][1] == cage[3][2] == cage[3][3] == 0){//右寄りに2つ並び1つ1段下にある形
+        return true;
+    }
+    if (cage[1][1] == cage[3][2] == cage[3][3] || cage[2][1] == 0){//右寄りに2つ並び1つ2段下にある形
+        return true;
+    }
+    if (cage[2][1] == cage[3][2] == cage[3][3] || cage[3][1] == 0){//1段目が埋まった右寄りに2つ並び1つ下にある形
+        return true;
+    }
+    if (cage[1][1] == cage[3][2] == cage[2][3] || cage[2][1] == cage[3][3] == 0){//相手が（」）こんな形
+        return true;
+    }
+    if (cage[2][1] == cage[3][2] == cage[1][3] || cage[3][1] == cage[2][3] == 0){//相手が（反転」）こんな形
+        return true;
+    } */
+    for (int t = 0; t < 6; t+=2){//1~3枚目
+        if (cage[1][1+t] == cage[1][3+t] == cage[2][2+t] || cage[2][1+t] == cage[2][3+t] == cage[3][2+t] == 0){//山の形
+            return true;
+        }
+        if (cage[1][1+t] == cage[3][3+t] == cage[2][2+t] || cage[2][1+t] == cage[3][2+t] == 0){//真ん中が高い山の形
+            return true;
+        }
+        if (cage[2][1+t] == cage[2][3+t] == cage[3][2+t] || cage[3][1+t] == cage[3][3+t]  == 0){//1段目が埋まった山の形
+            return true;
+        }
+        if (cage[2][1+t] == cage[1][2+t] == cage[2][3+t] || cage[3][1+t] == cage[3][3+t] == cage[2][2+t] == 0){//谷の形
+            return true;
+        }
+        if (cage[3][1+t] == cage[1][2+t] == cage[3][3+t] || cage[2][2+t] == 0){//真ん中が深い谷の形
+            return true;
+        }
+        if (cage[3][1+t] == cage[2][2+t] == cage[3][3+t] || cage[3][2+t] == 0){//1段目が埋まった谷の形
+            return true;
+        }
+
+        if (cage[1][1+t] == cage[1][2+t] == cage[2][3+t] || cage[2][1+t] == cage[2][2+t] == cage[3][3+t] == 0){//左寄りに2つ並び、1つ1段上にある形
+            return true;
+        }
+        if (cage[1][1+t] == cage[1][2+t] == cage[3][3+t] || cage[2][1+t] == cage[2][2+t] == 0){//左寄りに2つ並び、1つ2段上にある形（反転L字型）
+            return true;
+        }
+        if (cage[2][1+t] == cage[2][2+t] == cage[3][3+t] || cage[3][1+t] == cage[3][2+t] == 0){//1段目が埋まった左寄りに2つ並び、1つ上にある形
+            return true;
+        }
+        if (cage[2][1+t] == cage[2][2+t] == cage[1][3+t] || cage[3][1+t] == cage[3][2+t] == cage[2][3+t] == 0){//左寄りに2つ並び、1つ1段下にある形
+            return true;
+        }
+        if (cage[3][1+t] == cage[3][2+t] == cage[1][3+t] || cage[2][3+t] == 0){//左寄りに2つ並び、1つ2段下にある形
+            return true;
+        }
+        if (cage[3][1+t] == cage[3][2+t] == cage[2][3+t] || cage[3][3+t] == 0){//1段目が埋まった左寄りに2つ並び、1つ下にある形
+            return true;
+        }
+        if (cage[2][1+t] == cage[1][2+t] == cage[1][3+t] || cage[3][1+t] == cage[2][2+t] == cage[2][3+t] == 0){//右寄りに2つ並び1つ1段上にある形
+            return true;
+        }
+        if (cage[3][1+t] == cage[1][2+t] == cage[1][3+t] || cage[2][2+t] == cage[2][3+t] == 0){//右寄りに2つ並び1つ2段上にある形(L字型)
+            return true;
+        }
+        if (cage[3][1+t] == cage[2][2+t] == cage[2][3+t] || cage[3][2+t] == cage[3][3+t] == 0){//1段目が埋まった右寄りに2つ並び1つ上にある形
+            return true;
+        }
+        if (cage[1][1+t] == cage[2][2+t] == cage[2][3+t] || cage[2][1+t] == cage[3][2+t] == cage[3][3+t] == 0){//右寄りに2つ並び1つ1段下にある形
+            return true;
+        }
+        if (cage[1][1+t] == cage[3][2+t] == cage[3][3+t] || cage[2][1+t] == 0){//右寄りに2つ並び1つ2段下にある形
+            return true;
+        }
+        if (cage[2][1+t] == cage[3][2+t] == cage[3][3+t] || cage[3][1+t] == 0){//1段目が埋まった右寄りに2つ並び1つ下にある形
+            return true;
+        }
+        if (cage[1][1+t] == cage[3][2+t] == cage[2][3+t] || cage[2][1+t] == cage[3][3+t] == 0){//相手が（」）こんな形
+            return true;
+        }
+        if (cage[2][1+t] == cage[3][2+t] == cage[1][3+t] || cage[3][1+t] == cage[2][3+t] == 0){//相手が（反転」）こんな形
+            return true;
+        }
+    }
+    //4枚目
+    if (cage[1][7] == cage[2][8] == cage[1][1] || cage[2][7] == cage[2][1] == cage[3][8] == 0){//山の形
+        return true;
+    }
+    if (cage[1][7] == cage[2][8] == cage[3][1] || cage[2][7] == cage[3][8] == 0){//真ん中が高い山の形
+        return true;
+    }
+    if (cage[2][7] == cage[3][8] == cage[2][1] || cage[3][7] == cage[3][1]  == 0){//1段目が埋まった山の形
+        return true;
+    }
+    if (cage[2][7] == cage[1][8] == cage[2][1] || cage[3][7] == cage[3][1] == cage[2][8] == 0){//谷の形
+        return true;
+    }
+    if (cage[3][7] == cage[1][8] == cage[3][1] || cage[2][8] == 0){//真ん中が深い谷の形
+        return true;
+    }
+    if (cage[3][7] == cage[2][8] == cage[3][1] || cage[3][8] == 0){//1段目が埋まった谷の形
+        return true;
+    }
+
+    if (cage[1][7] == cage[1][8] == cage[2][1] || cage[2][7] == cage[2][8] == cage[3][1] == 0){//左寄りに2つ並び、1つ1段上にある形
+        return true;
+    }
+    if (cage[1][7] == cage[1][8] == cage[3][1] || cage[2][7] == cage[2][8] == 0){//左寄りに2つ並び、1つ2段上にある形（反転L字型）
+        return true;
+    }
+    if (cage[2][7] == cage[2][8] == cage[3][1] || cage[3][7] == cage[3][8] == 0){//1段目が埋まった左寄りに2つ並び、1つ上にある形
+        return true;
+    }
+    if (cage[2][7] == cage[2][8] == cage[1][1] || cage[3][7] == cage[3][8] == cage[2][1] == 0){//左寄りに2つ並び、1つ1段下にある形
+        return true;
+    }
+    if (cage[3][7] == cage[3][8] == cage[1][1] || cage[2][7] == 0){//左寄りに2つ並び、1つ2段下にある形
+        return true;
+    }
+    if (cage[3][7] == cage[3][8] == cage[2][1] || cage[3][1] == 0){//1段目が埋まった左寄りに2つ並び、1つ下にある形
+        return true;
+    }
+    if (cage[2][7] == cage[1][8] == cage[1][1] || cage[3][7] == cage[2][8] == cage[2][1] == 0){//右寄りに2つ並び1つ1段上にある形
+        return true;
+    }
+    if (cage[3][7] == cage[1][8] == cage[1][1] || cage[2][8] == cage[2][1] == 0){//右寄りに2つ並び1つ2段上にある形(L字型)
+        return true;
+    }
+    if (cage[3][7] == cage[2][8] == cage[2][1] || cage[3][8] == cage[3][1] == 0){//1段目が埋まった右寄りに2つ並び1つ上にある形
+        return true;
+    }
+    if (cage[1][7] == cage[2][8] == cage[2][1] || cage[2][7] == cage[3][8] == cage[3][1] == 0){//右寄りに2つ並び1つ1段下にある形
+        return true;
+    }
+    if (cage[1][7] == cage[3][8] == cage[3][1] || cage[2][7] == 0){//右寄りに2つ並び1つ2段下にある形
+        return true;
+    }
+    if (cage[2][7] == cage[3][8] == cage[3][1] || cage[3][7] == 0){//1段目が埋まった右寄りに2つ並び1つ下にある形
+        return true;
+    }
+    if (cage[1][7] == cage[3][8] == cage[2][1] || cage[2][7] == cage[3][1] == 0){//相手が（」）こんな形
+        return true;
+    }
+    if (cage[2][7] == cage[3][8] == cage[1][1] || cage[3][7] == cage[2][1] == 0){//相手が（反転」）こんな形
+        return true;
+    }
+    return false;
 }
 
 int ** to_canonical(const int ** cage){
