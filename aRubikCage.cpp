@@ -46,7 +46,7 @@ int** copy(/*const*/int** cage){
 };
 
 
-int ** fallcube(int **cage){  //キューブを下に落とす
+int ** fallcube(int **cage){  //キューブを下に落とす test_finish
     for (int j=0; j < num_positions; j++){
         for (int under = 0; under < 2; under++){
             for (int i = 0; i < 2; i++){    //0,1段のみ
@@ -61,7 +61,7 @@ int ** fallcube(int **cage){  //キューブを下に落とす
     return cage;////コピーせず今の盤面を上書き（変更後の盤面）
 };
 
-int** put(int** cage, int color, int position){//position: キューブを入れる場所（1段のマス数0~7）color入れる色(色数1~6(減らすと1~4))
+int** put(int** cage, int color, int position){//position: キューブを入れる場所（1段のマス数0~7）color入れる色(色数1~6(減らすと1~4)) test_finish
     copy(cage);//記録
     cage[2][position] = color;//入力された場所に指定された色のキューブを入れる
     cage = fallcube(cage);//重力
@@ -82,32 +82,30 @@ int** rotate_left(int ** cage,int cubeslide){//右回転
     /* for (int count = 0; count < 2; count++){
         flip(cage,cubeslide);//3回ずらす
     } */
-    for (int j; j < num_positions; j++){
+    for (int j = 0; j < num_positions; j++){
         int stack = cage[cubeslide][j];
-        cage[cubeslide][j] = cage[cubeslide][(j-2) % 8];
-        cage[cubeslide][7] = stack;
-        stack = cage[cubeslide][0];//i段全体的に1行ずらす
+        cage[cubeslide][j] = cage[cubeslide][(j-2)%8];
+        cage[cubeslide][(j-2)%8] = stack;
     }
     fallcube(cage);//重力
     return cage;//変更後の盤面
 };
 
-int** rotate_right(int ** cage,int cubeslide){
+int** rotate_right(int ** cage,int cubeslide){//左回転
     copy(cage);//記録
-    /* for (int count = 0; count < 6; count++){//左回転
+    /*for (int count = 0; count < 6; count++){
         flip(cage,cubeslide);//7回ずらす
     } */
-    for (int j; j < num_positions ; j++ ){
-        int stack = cage[cubeslide][0];
-        cage[cubeslide][j] = cage[cubeslide][j + 1];
-        cage[cubeslide][7] = stack;
-        stack = cage[cubeslide][0];//i段全体的に1行ずらす
+    for (int j = 8; j > num_positions ; j--){
+        int stack = cage[cubeslide][j];
+        cage[cubeslide][j] = cage[cubeslide][(j-2)% 8];
+        cage[cubeslide][(j-2)% 8] = stack;
     }
     cage = fallcube(cage);//重力
     return cage;//変更後の盤面
 };
 
-int** updown(int ** cage){
+int** updown(int ** cage){ //test_finish
     copy(cage);//記録
     for (int j = 0; j < num_positions; j++){
         int stack = cage[0][j];
@@ -118,22 +116,10 @@ int** updown(int ** cage){
     return cage;//変更後の盤面提示
 }
 
-int **reset(int ** cage){
-    int **reset_cage; // コピー元の盤面
-    reset_cage = new int*[height];
-    for (int i = 0; i < height; i++) {
-        reset_cage[i] = new int[num_positions];
-        for (int j = 0; j < num_positions; j++){
-            cage[i][j] = reset_cage[i][j];
-        }
-    }
 
-    return cage;//初期化された盤面
-}
-
-int putreach(const int ** cage,int color,int position){
+int putreach(/*const */int ** cage,int position){
     for (int j = 0; j < num_positions; j++){//j個目縦リーチ判定
-        if (cage[0][j] == cage[1][j]){ //縦に赤|赤|空の時
+        if (cage[0][j] == cage[1][j] && cage[0][j] != 0){ //縦に赤|赤|空の時
             position = j;
             return position;
         }
@@ -142,95 +128,83 @@ int putreach(const int ** cage,int color,int position){
     for (int i = 0; i < height; i++){//i段(0~2)数横リーチ判定
         for (int t = 0; t < 8; t += 2){
             if (cage[i][0+t] == cage[i][1+t] && cage[i][(2+t) % 8] == 0 && cage[i][1+t] != 0){//横に|赤|赤|空|の時1枚目
-            position = (2+t) % 8;
-            color = cage[i][0+t];
-            return position,color;
+                position = (2+t) % 8;
+                return position;
             }
             if (cage[i][1+t] == cage[i][(2+t) % 8] && cage[i][0+t] == 0 && cage[i][1+t] != 0){//|空|赤|赤|の時
                 position = 0+t;
-                color = cage[i][(2+t) % 8];
-                return position,color;
+                return position;
             }
             if (cage[i][0+t] == cage[i][(2+t) % 8] && cage[i][0+t] != 0 && cage[i][1+t] == 0){//横に|赤|空|赤|の時
                 position = 1+t;
-                color = cage[i][(2+t) % 8];
-                return position,color;
+                return position;
             }
-            if (i = 1 && cage[i-1][0+t] != 0 && cage[i-1][1+t] != 0 && cage[i-1][(2+t) % 8] != 0){//1段目が空いていない状態
+            if (i == 1 && cage[i-1][0+t] != 0 && cage[i-1][1+t] != 0 && cage[i-1][(2+t) % 8] != 0){//1段目が空いていない状態
                 if (cage[i][0+t] == cage[i][1+t] && cage[i][(2+t) % 8] == 0 && cage[i][1+t] != 0){//横に|赤|赤|空|
                     position = (2+t) % 8;
-                    color = cage[i][0+t];
-                    return position,color;
+                    return position;
                 }
                 if (cage[i][1+t] == cage[i][(2+t) % 8] && cage[i][0+t] == 0 && cage[i][1+t] != 0){//|空|赤|赤|の時
                     position = 0+t;
-                    color = cage[i][(2+t) % 8];
-                    return position,color;
+                    return position;
                 }
                 if (cage[i][0+t] == cage[i][(2+t) % 8] && cage[i][0+t] != 0 && cage[i][1+t] == 0){//横に|赤|空|赤|の時
                     position = 1+t;
-                    color = cage[i][(2+t) % 8];
-                    return position,color;
+                    return position;
                 }
             }
-            if (i = 2 && cage[i-1][0+t] != 0 && cage[i-1][1+t] != 0 && cage[i-1][(2+t) % 8] != 0){//2段目が空いていない状態
+            if (i == 2 && cage[i-1][0+t] != 0 && cage[i-1][1+t] != 0 && cage[i-1][(2+t) % 8] != 0){//2段目が空いていない状態
                 if (cage[i][0+t] == cage[i][1+t] && cage[i][(2+t) % 8] == 0 && cage[i][1+t] != 0){//横に|赤|赤|空|
                     position = (2+t) % 8;
-                    color = cage[i][0+t];
-                    return position,color;
+                    return position;
                 }
                 if (cage[i][1+t] == cage[i][(2+t) % 8] && cage[i][0+t] == 0 && cage[i][1+t] != 0){//横に|空|赤|赤|の時
                     position = 0+t;
-                    color = cage[i][(2+t) % 8];
-                    return position,color;
+                    return position;
                 }
                 if (cage[i][0+t] == cage[i][(2+t) % 8] && cage[i][0+t] != 0 && cage[i][1+t] == 0){//横に|赤|空|赤|の時
                     position = 1+t;
-                    color = cage[i][(2+t) % 8];
-                    return position,color;
+                    return position;
                 }
             }
         }
     }
+    // ここまで確認
 
     for (int t = 0; t < 8; t += 2){//斜め1～4枚目
         if (cage[0][1+t] != 0 && cage[1][0+t] != 0){//左上がり
             if (cage[1][1+t] == cage[2][(2+t) % 8] && cage[1][1+t] != 0 && cage[0][0+t] == 0){//3段目にある
                 position = 0+t;
-                color = cage[1][1+t];
-                return position,color;
+
+                return position;
             }
             if (cage[1][1+t] == cage[0][0+t] && cage[1][1+t] != 0 && cage[2][(2+t) % 8] == 0){//3段目にない
-                position = 2+t;
-                color = cage[1][1+t];
-                return position,color;
+                position = (2+t) % 8;
+                return position;
             }
             if (cage[2][(2+t) % 8] == cage[0][0+t] && cage[1][1+t] == 0 && cage[2][(2+t) % 8] != 0){//真ん中にない
                 position = 1+t;
-                color = cage[0][0+t];
-                return position,color;
+                printf("%d",1);
+                return position;
             }
         }
         if (cage[0][1+t] != 0 && cage[1][(2+t) % 8] != 0){//右上上がり
             if (cage[1][1+t] == cage[2][0+t] && cage[1][1+t] != 0 && cage[0][(2+t) % 8] == 0){//3段目にある
-                position = 2+t;
-                color = cage[1][1+t];
-                return position,color;
+                position = (2+t) % 8;
+                return position;
             }
             if (cage[1][1+t] == cage[0][(2+t) % 8] && cage[1][1+t] != 0 && cage[2][0+t] == 0){//3段目にない
                 position = 0+t;
-                color = cage[1][1+t];
-                return position,color;
+                return position;
             }
             if (cage[2][0+t] == cage[0][(2+t) % 8] && cage[1][1+t] == 0 && cage[2][0+t] != 0){//真ん中にない
                 position = 1+t;
-                color = cage[2][0+t];
-                return position,color;
+                return position;
             }
         }
     }
 
-    return position,color;
+    return position;
 }
 
 int left_slide_reach(const int ** cage, int cubeslide){
@@ -251,69 +225,69 @@ int right_slide_reach(const int ** cage, int cubeslide){
     return cubeslide;
 }
 
-bool updownreach(const int ** cage){
+bool updownreach(/*const*/ int ** cage){
     for (int t = 0; t < 8; t+=2){//1~4枚目
-        if (cage[0][0+t] == cage[1][1+t] == cage[0][(2+t) % 8] || cage[1][0+t] == cage[1][(2+t) % 8] == cage[2][1+t] == 0){//山の形
+        if ((cage[0][0+t] == cage[1][1+t] == cage[0][(2+t) % 8] != 0) && (cage[1][0+t] == cage[1][(2+t) % 8] == cage[2][1+t] == 0)){//山の形
             return true;
         }
-        if (cage[0][0+t] == cage[1][1+t] == cage[2][(2+t) % 8] || cage[1][0+t] == cage[2][1+t] == 0){//真ん中が高い山の形
+        if ((cage[0][0+t] == cage[1][1+t] == cage[2][(2+t) % 8] != 0) && (cage[1][0+t] == cage[2][1+t] == 0)){//真ん中が高い山の形
             return true;
         }
-        if (cage[1][0+t] == cage[2][1+t] == cage[1][(2+t) % 8] || cage[2][0+t] == cage[2][(2+t) % 8]  == 0){//1段目が埋まった山の形
+        if ((cage[1][0+t] == cage[2][1+t] == cage[1][(2+t) % 8] != 0) && (cage[2][0+t] == cage[2][(2+t) % 8]  == 0)){//1段目が埋まった山の形
+            return true;
+        }//失敗
+        if ((cage[1][0+t] == cage[0][1+t] == cage[1][(2+t) % 8] != 0) && (cage[2][0+t] == cage[2][(2+t) % 8] == cage[1][1+t] == 0)){//谷の形
+            return true;
+        }//miss
+        if ((cage[2][0+t] == cage[0][1+t] == cage[2][(2+t) % 8] != 0) && (cage[1][1+t] == 0)){//真ん中が深い谷の形
             return true;
         }
-        if (cage[1][0+t] == cage[0][1+t] == cage[1][(2+t) % 8] || cage[2][0+t] == cage[2][(2+t) % 8] == cage[1][1+t] == 0){//谷の形
-            return true;
-        }
-        if (cage[2][0+t] == cage[0][1+t] == cage[2][(2+t) % 8] || cage[1][1+t] == 0){//真ん中が深い谷の形
-            return true;
-        }
-        if (cage[2][0+t] == cage[1][1+t] == cage[2][(2+t) % 8] || cage[2][1+t] == 0){//1段目が埋まった谷の形
+        if ((cage[2][0+t] == cage[1][1+t] == cage[2][(2+t) % 8] != 0) && (cage[2][1+t] == 0)){//1段目が埋まった谷の形
             return true;
         }
 
-        if (cage[0][0+t] == cage[0][1+t] == cage[1][(2+t) % 8] || cage[1][0+t] == cage[1][1+t] == cage[2][(2+t) % 8] == 0){//左寄りに2つ並び、1つ1段上にある形
+        if ((cage[0][0+t] == cage[0][1+t] == cage[1][(2+t) % 8] != 0) && (cage[1][0+t] == cage[1][1+t] == cage[2][(2+t) % 8] == 0)){//左寄りに2つ並び、1つ1段上にある形
+            return true;
+        }//miss
+        if ((cage[0][0+t] == cage[0][1+t] == cage[2][(2+t) % 8] != 0) && (cage[1][0+t] == cage[1][1+t] == 0)){//左寄りに2つ並び、1つ2段上にある形（反転L字型）
+            return true;
+        }//miss
+        if ((cage[1][0+t] == cage[1][1+t] == cage[2][(2+t) % 8] != 0) && (cage[2][0+t] == cage[2][1+t] == 0)){//1段目が埋まった左寄りに2つ並び、1つ上にある形
+            return true;
+        }//miss
+        if ((cage[1][0+t] == cage[1][1+t] == cage[0][(2+t) % 8] != 0) && (cage[2][0+t] == cage[2][1+t] == cage[1][(2+t) % 8] == 0)){//左寄りに2つ並び、1つ1段下にある形
+            return true;
+        }//miss
+        if ((cage[2][0+t] == cage[2][1+t] == cage[0][(2+t) % 8] != 0) && (cage[1][(2+t) % 8] == 0)){//左寄りに2つ並び、1つ2段下にある形
+            return true;
+        }//miss
+        if ((cage[2][0+t] == cage[2][1+t] == cage[1][(2+t) % 8] != 0) && (cage[2][(2+t) % 8] == 0)){//1段目が埋まった左寄りに2つ並び、1つ下にある形
+            return true;
+        }//miss
+        if ((cage[1][0+t] == cage[0][1+t] == cage[0][(2+t) % 8] != 0) && (cage[2][0+t] == cage[1][1+t] == cage[1][(2+t) % 8] == 0)){//右寄りに2つ並び1つ1段上にある形
+            return true;
+        }//miss
+        if ((cage[2][0+t] == cage[0][1+t] == cage[0][(2+t) % 8] != 0) && (cage[1][1+t] == cage[1][(2+t) % 8] == 0)){//右寄りに2つ並び1つ2段上にある形(L字型)
+            return true;
+        }//miss
+        if ((cage[2][0+t] == cage[1][1+t] == cage[1][(2+t) % 8] != 0) && (cage[2][1+t] == cage[2][(2+t) % 8] == 0)){//1段目が埋まった右寄りに2つ並び1つ上にある形
+            return true;
+        }//miss
+        if ((cage[0][0+t] == cage[1][1+t] == cage[1][(2+t) % 8] != 0) && (cage[1][0+t] == cage[2][1+t] == cage[2][(2+t) % 8] == 0)){//右寄りに2つ並び1つ1段下にある形
+            return true;
+        }//miss
+        if ((cage[0][0+t] == cage[2][1+t] == cage[2][(2+t) % 8] != 0) && (cage[1][0+t] == 0)){//右寄りに2つ並び1つ2段下にある形
             return true;
         }
-        if (cage[0][0+t] == cage[0][1+t] == cage[2][(2+t) % 8] || cage[1][0+t] == cage[1][1+t] == 0){//左寄りに2つ並び、1つ2段上にある形（反転L字型）
+        if ((cage[1][0+t] == cage[2][1+t] == cage[2][(2+t) % 8] != 0) && (cage[2][0+t] == 0)){//1段目が埋まった右寄りに2つ並び1つ下にある形
             return true;
         }
-        if (cage[1][0+t] == cage[1][1+t] == cage[2][(2+t) % 8] || cage[2][0+t] == cage[2][1+t] == 0){//1段目が埋まった左寄りに2つ並び、1つ上にある形
+        if ((cage[0][0+t] == cage[2][1+t] == cage[1][(2+t) % 8] != 0) && (cage[1][0+t] == cage[2][(2+t) % 8] == 0)){//相手が（」）こんな形
             return true;
-        }
-        if (cage[1][0+t] == cage[1][1+t] == cage[0][(2+t) % 8] || cage[2][0+t] == cage[2][1+t] == cage[1][(2+t) % 8] == 0){//左寄りに2つ並び、1つ1段下にある形
+        }//miss
+        if ((cage[1][0+t] == cage[2][1+t] == cage[0][(2+t) % 8] != 0) && (cage[2][0+t] == cage[1][(2+t) % 8] == 0)){//相手が（反転」）こんな形
             return true;
-        }
-        if (cage[2][0+t] == cage[2][1+t] == cage[0][(2+t) % 8] || cage[1][(2+t) % 8] == 0){//左寄りに2つ並び、1つ2段下にある形
-            return true;
-        }
-        if (cage[2][0+t] == cage[2][1+t] == cage[1][(2+t) % 8] || cage[2][(2+t) % 8] == 0){//1段目が埋まった左寄りに2つ並び、1つ下にある形
-            return true;
-        }
-        if (cage[1][0+t] == cage[0][1+t] == cage[0][(2+t) % 8] || cage[2][0+t] == cage[1][1+t] == cage[1][(2+t) % 8] == 0){//右寄りに2つ並び1つ1段上にある形
-            return true;
-        }
-        if (cage[2][0+t] == cage[0][1+t] == cage[0][(2+t) % 8] || cage[1][1+t] == cage[1][(2+t) % 8] == 0){//右寄りに2つ並び1つ2段上にある形(L字型)
-            return true;
-        }
-        if (cage[2][0+t] == cage[1][1+t] == cage[1][(2+t) % 8] || cage[2][1+t] == cage[2][(2+t) % 8] == 0){//1段目が埋まった右寄りに2つ並び1つ上にある形
-            return true;
-        }
-        if (cage[0][0+t] == cage[1][1+t] == cage[1][(2+t) % 8] || cage[1][0+t] == cage[2][1+t] == cage[2][(2+t) % 8] == 0){//右寄りに2つ並び1つ1段下にある形
-            return true;
-        }
-        if (cage[0][0+t] == cage[2][1+t] == cage[2][(2+t) % 8] || cage[1][0+t] == 0){//右寄りに2つ並び1つ2段下にある形
-            return true;
-        }
-        if (cage[1][0+t] == cage[2][1+t] == cage[2][(2+t) % 8] || cage[2][0+t] == 0){//1段目が埋まった右寄りに2つ並び1つ下にある形
-            return true;
-        }
-        if (cage[0][0+t] == cage[2][1+t] == cage[1][(2+t) % 8] || cage[1][0+t] == cage[2][(2+t) % 8] == 0){//相手が（」）こんな形
-            return true;
-        }
-        if (cage[1][0+t] == cage[2][1+t] == cage[0][(2+t) % 8] || cage[2][0+t] == cage[1][(2+t) % 8] == 0){//相手が（反転」）こんな形
-            return true;
-        }
+        }//miss
     }
     return false;
 }
@@ -334,35 +308,42 @@ int ** to_canonical(const int ** cage){
     return min_cage;//標準形
 }
 
-void printlist(void){
-    int basecage[3][8] ={
-    {0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 1, 0, 3, 0}
+void print_list(void){
+    int test_cage[3][8] ={
+    {5, 2, 1, 0, 4, 0, 2, 1},
+    {1, 3, 0, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0, 0}
     };//テスト入力
-    int ** basecage_p = new int*[height];
+    int ** test_cage_p = new int*[height];
     for (int i = 0; i < height; i++) {
-        basecage_p[i] = new int[num_positions];
+        test_cage_p[i] = new int[num_positions];
         for (int j = 0; j < num_positions; j++) {
-            basecage_p[i][j] = basecage[i][j];
+            test_cage_p[i][j] = test_cage[i][j];
         }
     }
-    basecage_p = put(basecage_p,2,4);
+    test_cage_p = rotate_left(test_cage_p,0);
+    // int met = (test_cage_p,2);
+    // printf("%d\n", met);
+    // int reach = putreach(test_cage_p,7);
+    // printf("reach %d\n",reach);
+    // bool sita = updownreach(test_cage_p);
+    // printf("%d\n",sita);
 
-    for (int i = 0; i < 3; i++){
-        for (int j = 0; j < 8; j++){
-            basecage[i][j] = basecage_p[i][j];
-            printf("%d ", basecage[i][j]);
+    for (int i = 0; i < height; i++){
+        for (int j = 0; j < num_positions; j++){
+            test_cage[i][j] = test_cage_p[i][j];
+            printf("%d ", test_cage[i][j]);
         }
         printf("\n"); //配列表示
     }
+    delete[] test_cage_p;
     return;
 }
 
 
 
 int main (int argc, char *argv[]){
-    printlist();
+    print_list();
     // main program here
     return 0;
 }
