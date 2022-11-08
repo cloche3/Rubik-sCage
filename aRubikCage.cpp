@@ -48,8 +48,8 @@ int** copy(/*const*/int** cage){
 
 int ** fallcube(int **cage){  //キューブを下に落とす
     for (int j=0; j < num_positions; j++){
-        for (int top = 2; top > 0; top--){
-            for (int i = 0; i < top; i++){    //0,1段のみ
+        for (int under = 0; under < 2; under++){
+            for (int i = 0; i < 2; i++){    //0,1段のみ
                 if (cage[i][j] == 0 && cage[i+1][j] != 0) {  // 場所 j の i 段目が空で、i+1段目が空じゃない時
                     cage[i][j] = cage[i + 1][j];
                     cage[i + 1][j] = 0;
@@ -135,8 +135,7 @@ int putreach(const int ** cage,int color,int position){
     for (int j = 0; j < num_positions; j++){//j個目縦リーチ判定
         if (cage[0][j] == cage[1][j]){ //縦に赤|赤|空の時
             position = j;
-            color = cage[0][j];
-            return position,color;
+            return position;
         }
     }
 
@@ -234,7 +233,16 @@ int putreach(const int ** cage,int color,int position){
     return position,color;
 }
 
-int slidereach(const int ** cage, int cubeslide){
+int left_slide_reach(const int ** cage, int cubeslide){
+    for (int t = 0; t < 8; t+=2){//1~4枚目
+        /* code */
+    }
+
+
+    return cubeslide;
+}
+
+int right_slide_reach(const int ** cage, int cubeslide){
     for (int t = 0; t < 8; t+=2){//1~4枚目
         /* code */
     }
