@@ -2,13 +2,14 @@
 #include <algorithm>
 #include <map>
 #include <stdio.h>
+#include <cstring>
 
 /*
 変数variable/argument/return/用途
 copy/ cage / new_cage/ 盤面のコピー
 fallcube/ cage/ 0/ キューブを下に落とす（重力）
-put/ cage,color,position/ cage/ キューブを入れる場所を決める
-flip/ cage,cubeslide/ 0/ 1行右にずらす
+put/ cage, color, position/ cage/ キューブを入れる場所を決める
+flip/ cage, cubeslide/ 0/ 1行右にずらす
 
 
 引数argument
@@ -19,7 +20,7 @@ cage[i][j] i段目(0~2)　左上から右回りに通るマスj個目　下表�
 組み合わせとして
 (0,1,2)1枚目　(2,3,4)　2枚目　(4,5,6) 3枚目　(6,7,0) 4枚目　とする
 値が小さい方向が左、値が大きい方向が右
-color 色数(1~6 , 0 = 空)
+color 色の種類(1~6 , 0 = 空)
 position ブロックを入れる時の穴決定(0~7)
 cubeslide ケージを回転させる段決定(0~2)
 
@@ -77,31 +78,35 @@ int** put(int** cage, int color, int position){//position: キューブを入れ
     return;//変更後の盤面
 }; */
 
-int** rotate_left(int ** cage,int cubeslide){//右回転
+int** rotate_left(int ** cage, int cubeslide){//時計回り
     copy(cage);//記録
     /* for (int count = 0; count < 2; count++){
         flip(cage,cubeslide);//3回ずらす
     } */
+    int * stack;
+    stack = new int [num_positions];
     for (int j = 0; j < num_positions; j++){
-        int stack = cage[cubeslide][j];
-        cage[cubeslide][j] = cage[cubeslide][(j-2)%8];
-        cage[cubeslide][(j-2)%8] = stack;
+        stack[j] = cage[cubeslide][(j+2) %8];
+        cage[cubeslide][j] = stack[j];
     }
     fallcube(cage);//重力
+    delete[] stack;
     return cage;//変更後の盤面
 };
 
-int** rotate_right(int ** cage,int cubeslide){//左回転
+int** rotate_right(int ** cage, int cubeslide){//反時計回り
     copy(cage);//記録
     /*for (int count = 0; count < 6; count++){
         flip(cage,cubeslide);//7回ずらす
     } */
-    for (int j = 8; j > num_positions ; j--){
-        int stack = cage[cubeslide][j];
-        cage[cubeslide][j] = cage[cubeslide][(j-2)% 8];
-        cage[cubeslide][(j-2)% 8] = stack;
+    int * stack;
+    stack = new int [num_positions];
+    for (int j = 0; j < num_positions ; j++){
+        stack[j]= cage[cubeslide][(j-2)% 8];
+        cage[cubeslide][j] = stack[j];
     }
     cage = fallcube(cage);//重力
+    delete[] stack;
     return cage;//変更後の盤面
 };
 
@@ -117,7 +122,7 @@ int** updown(int ** cage){ //test_finish
 }
 
 
-int putreach(/*const */int ** cage,int position){
+int putreach(/*const */int ** cage, int position){
     for (int j = 0; j < num_positions; j++){//j個目縦リーチ判定
         if (cage[0][j] == cage[1][j] && cage[0][j] != 0){ //縦に赤|赤|空の時
             position = j;
@@ -172,32 +177,30 @@ int putreach(/*const */int ** cage,int position){
     // ここまで確認
 
     for (int t = 0; t < 8; t += 2){//斜め1～4枚目
-        if (cage[0][1+t] != 0 && cage[1][0+t] != 0){//左上がり
-            if (cage[1][1+t] == cage[2][(2+t) % 8] && cage[1][1+t] != 0 && cage[0][0+t] == 0){//3段目にある
+        if (cage[0][1+t] != 0 && cage[1][0+t] != 0){//右下下がり
+            if (cage[1][1+t] == cage[0][(2+t) % 8] && cage[1][1+t] != 0 && cage[2][0+t] == 0){//1段目に空
                 position = 0+t;
-
                 return position;
             }
-            if (cage[1][1+t] == cage[0][0+t] && cage[1][1+t] != 0 && cage[2][(2+t) % 8] == 0){//3段目にない
+            if (cage[1][1+t] == cage[0][0+t] && cage[1][1+t] != 0 && cage[0][(2+t) % 8] == 0){//3段目に空
                 position = (2+t) % 8;
                 return position;
             }
-            if (cage[2][(2+t) % 8] == cage[0][0+t] && cage[1][1+t] == 0 && cage[2][(2+t) % 8] != 0){//真ん中にない
+            if (cage[2][0+t] == cage[0][(2+t) % 8] && cage[0][(2+t) % 8] != 0 && cage[1][1+t] == 0){//真ん中に空
                 position = 1+t;
-                printf("%d",1);
                 return position;
             }
         }
         if (cage[0][1+t] != 0 && cage[1][(2+t) % 8] != 0){//右上上がり
-            if (cage[1][1+t] == cage[2][0+t] && cage[1][1+t] != 0 && cage[0][(2+t) % 8] == 0){//3段目にある
-                position = (2+t) % 8;
-                return position;
-            }
-            if (cage[1][1+t] == cage[0][(2+t) % 8] && cage[1][1+t] != 0 && cage[2][0+t] == 0){//3段目にない
+            if (cage[1][1+t] == cage[2][(2+t) % 8] && cage[1][1+t] != 0 && cage[0][0+t] == 0){//1段目に空
                 position = 0+t;
                 return position;
             }
-            if (cage[2][0+t] == cage[0][(2+t) % 8] && cage[1][1+t] == 0 && cage[2][0+t] != 0){//真ん中にない
+            if (cage[1][1+t] == cage[0][0+t] && cage[1][1+t] != 0 && cage[2][(2+t) % 8] == 0){//3段目に空
+                position = (2+t) % 8;
+                return position;
+            }
+            if (cage[0][0+t] == cage[2][(2+t) % 8] && cage[0][0+t] != 0 && cage[1][1+t] == 0){//真ん中に空
                 position = 1+t;
                 return position;
             }
@@ -308,34 +311,61 @@ int ** to_canonical(const int ** cage){
     return min_cage;//標準形
 }
 
-void print_list(void){
-    int test_cage[3][8] ={
-    {5, 2, 1, 0, 4, 0, 2, 1},
-    {1, 3, 0, 0, 0, 0, 0, 0},
-    {0, 1, 0, 0, 0, 0, 0, 0}
-    };//テスト入力
+// int **create_cage(int* cage_0, int* cage_1, int* cage_2) {
+//     int** new_cage;
+//     new_cage = new int*[3];
+//     for (int i = 0; i < 3; i++) {
+//         new_cage[i] = new int[8];
+//     }
+//     memcpy(new_cage[0], cage_0, sizeof(cage_0));
+//     memcpy(new_cage[1], cage_1, sizeof(cage_1));
+//     memcpy(new_cage[2], cage_2, sizeof(cage_2));
+
+//     return new_cage;
+// }
+
+// cage を画面に表示
+void print_cage(int** cage) {
+    for (int i = 0; i < height; i++){
+        for (int j = 0; j < num_positions; j++){
+            printf("%d ", cage[i][j]);
+        }
+        printf("\n"); //配列表示
+    }
+    printf("\n");
+}
+
+
+void test_func(void){
+    int test[3][8] = {
+        {4, 2, 1, 4, 3, 0, 5, 3},
+        {0, 4, 0, 0, 2, 0, 0, 0},
+        {0, 0, 0, 0, 1, 0, 0, 0}
+    };
+
+    // int** org = create_cage(test[0], test[1], test[2]);
+    // print_cage(org);
+    // int** rotated = rotate_left(org, 1);
+    // print_cage(rotated);
+
     int ** test_cage_p = new int*[height];
     for (int i = 0; i < height; i++) {
         test_cage_p[i] = new int[num_positions];
         for (int j = 0; j < num_positions; j++) {
-            test_cage_p[i][j] = test_cage[i][j];
+            test_cage_p[i][j] = test[i][j];
         }
     }
-    test_cage_p = rotate_left(test_cage_p,0);
+    print_cage(test_cage_p);
+    // test_cage_p = rotate_right(test_cage_p,0);
     // int met = (test_cage_p,2);
     // printf("%d\n", met);
-    // int reach = putreach(test_cage_p,7);
+    // int reach = putreach(test_cage_p,0);
     // printf("reach %d\n",reach);
     // bool sita = updownreach(test_cage_p);
     // printf("%d\n",sita);
 
-    for (int i = 0; i < height; i++){
-        for (int j = 0; j < num_positions; j++){
-            test_cage[i][j] = test_cage_p[i][j];
-            printf("%d ", test_cage[i][j]);
-        }
-        printf("\n"); //配列表示
-    }
+    int** rotated = rotate_left(test_cage_p, 0);
+    print_cage(rotated);
     delete[] test_cage_p;
     return;
 }
@@ -343,7 +373,7 @@ void print_list(void){
 
 
 int main (int argc, char *argv[]){
-    print_list();
+    test_func();
     // main program here
     return 0;
 }
