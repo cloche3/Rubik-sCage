@@ -78,44 +78,50 @@ int** put(int** cage, int color, int position){//position: キューブを入れ
     return;//変更後の盤面
 }; */
 
-int** rotate_left(int ** cage, int cubeslide){//時計回り
+int** clockwise(int ** cage, int cubeslide){//時計回り
     copy(cage);//記録
-    /* for (int count = 0; count < 2; count++){
-        flip(cage,cubeslide);//3回ずらす
-    } */
-    int * stack;
-    stack = new int [num_positions];
-    for (int j = 0; j < num_positions; j++){
-        stack[j] = cage[cubeslide][(j+2) %8];
-        cage[cubeslide][j] = stack[j];
+
+    int **stack  = new int*[height];
+    for (int i = 0; i < height; i++) {
+        stack[i] = new int[num_positions];
+        for (int j = 0; j < num_positions; j++) {
+            stack[i][j] = cage[i][j];
+        }
     }
-    fallcube(cage);//重力
-    delete[] stack;
-    return cage;//変更後の盤面
+
+    for (int j = 0; j < num_positions; j++){
+        stack[cubeslide][j] = cage[cubeslide][(j+2) %8];
+        // cage[cubeslide][j] = stack[cubeslide][j];
+    }
+    stack = fallcube(stack);//重力
+    return stack;//変更後の盤面
 };
 
-int** rotate_right(int ** cage, int cubeslide){//反時計回り
+int** counterclockwise(int ** cage, int cubeslide){//反時計回り
     copy(cage);//記録
-    /*for (int count = 0; count < 6; count++){
-        flip(cage,cubeslide);//7回ずらす
-    } */
-    int * stack;
-    stack = new int [num_positions];
-    for (int j = 0; j < num_positions ; j++){
-        stack[j]= cage[cubeslide][(j-2)% 8];
-        cage[cubeslide][j] = stack[j];
+
+    int **stack  = new int*[height];
+    for (int i = 0; i < height; i++) {
+        stack[i] = new int[num_positions];
+        for (int j = 0; j < num_positions; j++) {
+            stack[i][j] = cage[i][j];
+        }
     }
-    cage = fallcube(cage);//重力
-    delete[] stack;
-    return cage;//変更後の盤面
+
+    for (int j = 0; j < num_positions ; j++){
+        stack[cubeslide][j]= cage[cubeslide][(j-2)% 8];
+        // cage[cubeslide][j] = stack[j];
+    }
+    stack = fallcube(stack);//重力
+    return stack;//変更後の盤面
 };
 
 int** updown(int ** cage){ //test_finish
     copy(cage);//記録
     for (int j = 0; j < num_positions; j++){
         int stack = cage[0][j];
-        cage[0][j] = cage[1][j];
-        cage[1][j] = stack;//上下入れ替え
+        cage[0][j] = cage[2][j];
+        cage[2][j] = stack;//上下入れ替え
     }
     cage = fallcube(cage);//重力
     return cage;//変更後の盤面提示
@@ -345,7 +351,7 @@ void test_func(void){
 
     // int** org = create_cage(test[0], test[1], test[2]);
     // print_cage(org);
-    // int** rotated = rotate_left(org, 1);
+    // int** rotated = clockwise(org, 1);
     // print_cage(rotated);
 
     int ** test_cage_p = new int*[height];
@@ -356,7 +362,7 @@ void test_func(void){
         }
     }
     print_cage(test_cage_p);
-    // test_cage_p = rotate_right(test_cage_p,0);
+    test_cage_p = counterclockwise(test_cage_p,0);
     // int met = (test_cage_p,2);
     // printf("%d\n", met);
     // int reach = putreach(test_cage_p,0);
@@ -364,8 +370,9 @@ void test_func(void){
     // bool sita = updownreach(test_cage_p);
     // printf("%d\n",sita);
 
-    int** rotated = updown(test_cage_p);
-    print_cage(rotated);
+    // test_cage_p = clockwise(test_cage_p, 1);
+
+    print_cage(test_cage_p);
     delete[] test_cage_p;
     return;
 }
