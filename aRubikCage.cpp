@@ -69,16 +69,7 @@ int** put(int** cage, int color, int position){//position: キューブを入れ
     return cage;//変更後の盤面
 };
 
-/* void flip(int ** cage,int cubeslide){//cubeslide横にずらす場所決め(段数0~2)
-    for (int stack = cage[cubeslide][0],t; t < 7; t++){
-        cage[cubeslide][t] = cage[cubeslide][t + 1];
-        cage[cubeslide][7] = stack;
-        stack = cage[cubeslide][0];//i段全体的に1行ずらす
-    }
-    return;//変更後の盤面
-}; */
-
-int** clockwise(int ** cage, int cubeslide){//時計回り
+int** counterclockwise(int ** cage, int cubeslide){//反時計回り test_finish
     copy(cage);//記録
 
     int **stack  = new int*[height];
@@ -91,13 +82,12 @@ int** clockwise(int ** cage, int cubeslide){//時計回り
 
     for (int j = 0; j < num_positions; j++){
         stack[cubeslide][j] = cage[cubeslide][(j+2) %8];
-        // cage[cubeslide][j] = stack[cubeslide][j];
     }
     stack = fallcube(stack);//重力
     return stack;//変更後の盤面
 };
 
-int** counterclockwise(int ** cage, int cubeslide){//反時計回り
+int** clockwise(int ** cage, int cubeslide){//時計回り test_finish
     copy(cage);//記録
 
     int **stack  = new int*[height];
@@ -109,11 +99,10 @@ int** counterclockwise(int ** cage, int cubeslide){//反時計回り
     }
 
     for (int j = 0; j < num_positions ; j++){
-        stack[cubeslide][j]= cage[cubeslide][(j-2)% 8];
-        // cage[cubeslide][j] = stack[j];
+        cage[cubeslide][(j+2)%8] = stack[cubeslide][j];
     }
-    stack = fallcube(stack);//重力
-    return stack;//変更後の盤面
+    cage = fallcube(cage);//重力
+    return cage;//変更後の盤面
 };
 
 int** updown(int ** cage){ //test_finish
@@ -326,7 +315,6 @@ int ** to_canonical(const int ** cage){
 //     memcpy(new_cage[0], cage_0, sizeof(cage_0));
 //     memcpy(new_cage[1], cage_1, sizeof(cage_1));
 //     memcpy(new_cage[2], cage_2, sizeof(cage_2));
-
 //     return new_cage;
 // }
 
@@ -362,15 +350,18 @@ void test_func(void){
         }
     }
     print_cage(test_cage_p);
-    test_cage_p = counterclockwise(test_cage_p,0);
-    // int met = (test_cage_p,2);
+
+    test_cage_p = clockwise(test_cage_p,0);
+    test_cage_p = counterclockwise(test_cage_p, 0);
+
+    // int met = updownreach(test_cage_p,2);
     // printf("%d\n", met);
+
     // int reach = putreach(test_cage_p,0);
     // printf("reach %d\n",reach);
+
     // bool sita = updownreach(test_cage_p);
     // printf("%d\n",sita);
-
-    // test_cage_p = clockwise(test_cage_p, 1);
 
     print_cage(test_cage_p);
     delete[] test_cage_p;
