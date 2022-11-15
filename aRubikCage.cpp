@@ -364,7 +364,7 @@ void test_func(void){
     // bool sita = updownreach(test_cage_p);
     // printf("%d\n",sita);
 
-    int** rotated = rotate_left(test_cage_p, 0);
+    int** rotated = updown(test_cage_p);
     print_cage(rotated);
     delete[] test_cage_p;
     return;
