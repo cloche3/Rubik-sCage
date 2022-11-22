@@ -26,7 +26,6 @@ cubeslide ケージを回転させる段決定(0~2)
 
 */
 
-
 const int height = 3;   // ケージの高さ
 const int length_of_edge = 3;   // ケージを上から見た正方形の一辺の長さ
 const int num_positions = length_of_edge * 2 + (length_of_edge - 2) * 2;    // 上から見た、ブロックを入れる穴の数。一辺の長さが3のときは8
@@ -120,7 +119,7 @@ int** updown(int ** cage) { //test_finish
 }
 
 
-int putreach(/*const */int ** cage) {
+int putreach(/*const */int ** cage) { //test_finish
     for (int j = 0; j < num_positions; j++){//j個目縦リーチ判定
         if (cage[0][j] == cage[1][j] && cage[0][j] != 0) { //縦に赤|赤|空の時
             position = j;
@@ -141,7 +140,6 @@ int putreach(/*const */int ** cage) {
                 }
                 if (cage[i][0+t] == cage[i][((2+t) % 8)] && cage[i][0+t] != 0 && cage[i][1+t] == 0){//横に|赤|空|赤|の時
                     position = 1+t;
-                    printf("2 %d\n",i);
                     return position;
                 }
             }
@@ -175,9 +173,22 @@ int putreach(/*const */int ** cage) {
             }
         }
     }
-    // ここまで確認
 
     for (int t = 0; t < 8; t += 2){//斜め1～4枚目
+        if (cage[0][1+t] != 0 && cage[1][((2+t) % 8)] != 0){//右上上がり
+            if (cage[1][1+t] == cage[2][((2+t) % 8)] && cage[1][1+t] != 0 && cage[0][0+t] == 0){//1段目に空
+                position = 0+t;
+                return position;
+            }
+            if (cage[1][1+t] == cage[0][0+t] && cage[1][1+t] != 0 && cage[2][((2+t) % 8)] == 0){//3段目に空
+                position = (2+t) % 8;
+                return position;
+            }
+            if (cage[0][0+t] == cage[2][((2+t) % 8)] && cage[0][0+t] != 0 && cage[1][1+t] == 0){//真ん中に空
+                position = 1+t;
+                return position;
+            }
+        }
         if (cage[0][1+t] != 0 && cage[1][0+t] != 0){//右下下がり
             if (cage[1][1+t] == cage[0][((2+t) % 8)] && cage[1][1+t] != 0 && cage[2][0+t] == 0){//1段目に空
                 position = 0+t;
@@ -189,48 +200,13 @@ int putreach(/*const */int ** cage) {
             }
             if (cage[2][0+t] == cage[0][((2+t) % 8)] && cage[0][((2+t) % 8)] != 0 && cage[1][1+t] == 0){//真ん中に空
                 position = 1+t;
-
                 return position;
             }
         }
-        if (cage[0][1+t] != 0 && cage[1][((2+t) % 8)] != 0){//右上上がり
-            if (cage[1][1+t] == cage[2][((2+t) % 8)] && cage[1][1+t] != 0 && cage[0][0+t] == 0){//1段目に空
-                position = 0+t;
 
-                return position;
-            }
-            if (cage[1][1+t] == cage[0][0+t] && cage[1][1+t] != 0 && cage[2][((2+t) % 8)] == 0){//3段目に空
-                position = (2+t) % 8;
-
-                return position;
-            }
-            if (cage[0][0+t] == cage[2][((2+t) % 8)] && cage[0][0+t] != 0 && cage[1][1+t] == 0){//真ん中に空
-                position = 1+t;
-                printf("2 %d\n",t);
-                return position;
-            }
-        }
     }
 
     return position;
-}
-
-int left_slide_reach(const int ** cage, int cubeslide){
-    for (int t = 0; t < 8; t+=2){//1~4枚目
-        /* code */
-    }
-
-
-    return cubeslide;
-}
-
-int right_slide_reach(const int ** cage, int cubeslide){
-    for (int t = 0; t < 8; t+=2){//1~4枚目
-        /* code */
-    }
-
-
-    return cubeslide;
 }
 
 bool updownreach(/*const*/ int ** cage){
@@ -322,7 +298,7 @@ bool updownreach(/*const*/ int ** cage){
     return false;
 }
 
-int ** to_canonical(const int ** cage){
+int ** to_canonical(int ** cage){
     int **min_cage; // コピー先の盤面
     min_cage = new int*[height];
     for (int i = 0; i < height; i++) {
@@ -332,37 +308,56 @@ int ** to_canonical(const int ** cage){
         }
     }
     for (int board = 0; board < 4; board++){//8状態を保存
-        /* code */
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < num_positions; j++) {
+                min_cage[i][(7+j) % 8] == cage[i][j]; //鏡像
+            }
+        }
+        if (cage < min_cage){
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < num_positions; j++) {
+                    min_cage[i][j] == cage[i][j];
+                }
+            }
+        }
     }
 
     return min_cage;//標準形
 }
 
-int ** three_cube_line(const int ** cage) {
+int three_cube_line(int ** cage) { //test_finish
     for (int j = 0; j < num_positions; j++) {//j個目縦3揃い判定
-        if (cage[0][j] == cage[1][j] == cage[2][j] && cage[0][j] != 0) { //縦に赤|赤|赤の時
-            buffer_color = cage[0][j];
-            return buffer_color
+        if ((cage[0][j] == cage[1][j]) && (cage[1][j] == cage[2][j])){
+            if (cage[0][j] != 0) {
+                buffer_color = cage[0][j];
+                return buffer_color;
+            }
         }
     }
 
     for (int i = 0; i < height; i++){
         for (int t = 0; t < 8; t += 2){//横3揃い判定
-            if (cage[i][0+t] == cage[i][1+t] == cage [i][((2+t)%8)] && cage[i][0+t] != 0){
-                buffer_color = cage[i][0+t];
-                return buffer_color
+            if ((cage[i][0+t] == cage[i][1+t]) && (cage[i][1+t] == cage [i][((2+t)%8)])){
+                if (cage[i][0+t] != 0){
+                    buffer_color = cage[i][0+t];
+                    return buffer_color;
+                }
             }
         }
     }
 
     for (int t = 0; t < 8; t += 2){//斜め3揃い判定
-        if (cage[0][0+t] == cage[1][1+t] == cage [2][((2+t)%8)] && cage[0][0+t] != 0){
-            buffer_color = cage[0][0+t];
-            return buffer_color
+        if ((cage[0][0+t] == cage[1][1+t]) && (cage[1][1+t] == cage [2][((2+t)%8)])){
+            if (cage[0][0+t] != 0){
+                buffer_color = cage[0][0+t];
+                return buffer_color;
+            }
         }
-        if (cage[2][0+t] == cage[1][1+t] == cage [0][((2+t)%8)] && cage[2][0+t] != 0){
-            buffer_color = cage[2][0+t];
-            return buffer_color
+        if ((cage[2][0+t] == cage[1][1+t]) && (cage[1][1+t] == cage [0][((2+t)%8)])){
+            if (cage[2][0+t] != 0){
+                buffer_color = cage[2][0+t];
+                return buffer_color;
+            }
         }
     }
 
@@ -395,9 +390,9 @@ void print_cage(int** cage) {
 
 void test_func(void){
     int test[3][8] = {
-        {0, 0, 1, 2, 3, 0, 0, 0},
-        {0, 0, 2, 0, 4, 0, 0, 0},
-        {0, 0, 1, 0, 1, 0, 0, 0}
+        {0, 0, 2, 3, 1, 0, 0, 0},
+        {0, 0, 3, 1, 1, 0, 0, 0},
+        {0, 0, 0, 0, 1, 0, 0, 0}
     };
 
     // int** org = create_cage(test[0], test[1], test[2]);
@@ -417,11 +412,16 @@ void test_func(void){
     // test_cage_p = clockwise(test_cage_p,0);
     // test_cage_p = counterclockwise(test_cage_p, 0);
 
-    int met = putreach(test_cage_p);
-    printf("putreach %d\n", met);
+    // int met = putreach(test_cage_p);
+    // printf("putreach %d\n", met);
+
+    int line = three_cube_line(test_cage_p);
+    printf("line_color %d\n", line);
 
     // bool sita = updownreach(test_cage_p);
     // printf("updownreach %d\n",sita);
+
+    test_cage_p = to_canonical(test_cage_p);
 
     print_cage(test_cage_p);
     delete[] test_cage_p;
