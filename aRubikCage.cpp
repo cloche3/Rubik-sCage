@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <stdio.h>
 #include <cstring>
+#include <vector>
 
 /*
 変数variable/argument/return/用途
@@ -26,11 +27,11 @@ cubeslide ケージを回転させる段決定(0~2)
 
 */
 
+using namespace std;
+
 const int height = 3;   // ケージの高さ
 const int length_of_edge = 3;   // ケージを上から見た正方形の一辺の長さ
 const int num_positions = length_of_edge * 2 + (length_of_edge - 2) * 2;    // 上から見た、ブロックを入れる穴の数。一辺の長さが3のときは8
-int buffer_color;   //色の一時保存
-int position;
 
 int** copy(/*const*/int** cage){
     int **new_cage; // コピー先の盤面
@@ -120,6 +121,7 @@ int** updown(int ** cage) { //test_finish
 
 
 int putreach(/*const */int ** cage) { //test_finish
+    int position; //キューブを入れる箇所
     for (int j = 0; j < num_positions; j++){//j個目縦リーチ判定
         if (cage[0][j] == cage[1][j] && cage[0][j] != 0) { //縦に赤|赤|空の時
             position = j;
@@ -298,6 +300,18 @@ bool updownreach(/*const*/ int ** cage){
     return false;
 }
 
+/** return True if cage1 <= cage2*/
+bool le(int** cage1, int** cage2) {
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < num_positions; j++) {
+            if (cage1[i][j] > cage2[i][j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 int ** to_canonical(int ** cage){
     int **min_cage; // コピー先の盤面
     min_cage = new int*[height];
@@ -310,13 +324,25 @@ int ** to_canonical(int ** cage){
     for (int board = 0; board < 4; board++){//8状態を保存
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < num_positions; j++) {
-                min_cage[i][(7+j) % 8] == cage[i][j]; //鏡像
+                min_cage[i][((7+j) % 8)] = cage[i][j]; //鏡像
             }
         }
-        if (cage < min_cage){
+        if (le(cage,min_cage)){ // 大小比較
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < num_positions; j++) {
-                    min_cage[i][j] == cage[i][j];
+                    cage[i][j] = min_cage[i][j];
+                }
+            }
+        }
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < num_positions; j++) {
+                min_cage[i][((3+j) % 8)] = cage[i][j]; //対象形
+            }
+        }
+        if (le(cage,min_cage)){ // 大小比較
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < num_positions; j++) {
+                    cage[i][j] = min_cage[i][j];
                 }
             }
         }
@@ -325,22 +351,23 @@ int ** to_canonical(int ** cage){
     return min_cage;//標準形
 }
 
-int three_cube_line(int ** cage) { //test_finish
-    for (int j = 0; j < num_positions; j++) {//j個目縦3揃い判定
+
+
+vector<int> three_cube_line(int ** cage) { //　3つ揃った状態、引き分け（2色以上）も加味 test_finish
+    std::vector<int> buffer_color;   //色の一時保存
+    for (int j = 0; j < num_positions; j++) {//j列目縦3揃い判定
         if ((cage[0][j] == cage[1][j]) && (cage[1][j] == cage[2][j])){
             if (cage[0][j] != 0) {
-                buffer_color = cage[0][j];
-                return buffer_color;
+                buffer_color.push_back(cage[0][j]);
             }
         }
     }
 
     for (int i = 0; i < height; i++){
-        for (int t = 0; t < 8; t += 2){//横3揃い判定
+        for (int t = 0; t < 8; t += 2){//i段目横3揃い判定
             if ((cage[i][0+t] == cage[i][1+t]) && (cage[i][1+t] == cage [i][((2+t)%8)])){
                 if (cage[i][0+t] != 0){
-                    buffer_color = cage[i][0+t];
-                    return buffer_color;
+                    buffer_color.push_back(cage[i][0+t]);
                 }
             }
         }
@@ -349,18 +376,15 @@ int three_cube_line(int ** cage) { //test_finish
     for (int t = 0; t < 8; t += 2){//斜め3揃い判定
         if ((cage[0][0+t] == cage[1][1+t]) && (cage[1][1+t] == cage [2][((2+t)%8)])){
             if (cage[0][0+t] != 0){
-                buffer_color = cage[0][0+t];
-                return buffer_color;
+                buffer_color.push_back(cage[0][0+t]);
             }
         }
         if ((cage[2][0+t] == cage[1][1+t]) && (cage[1][1+t] == cage [0][((2+t)%8)])){
             if (cage[2][0+t] != 0){
-                buffer_color = cage[2][0+t];
-                return buffer_color;
+                buffer_color.push_back(cage[2][0+t]);
             }
         }
     }
-
     return buffer_color;
 }
 
@@ -390,9 +414,9 @@ void print_cage(int** cage) {
 
 void test_func(void){
     int test[3][8] = {
-        {0, 0, 2, 3, 1, 0, 0, 0},
-        {0, 0, 3, 1, 1, 0, 0, 0},
-        {0, 0, 0, 0, 1, 0, 0, 0}
+        {0, 0, 2, 2, 2, 1, 1, 0},
+        {0, 0, 3, 3, 1, 0, 0, 0},
+        {0, 0, 1, 1, 1, 0, 0, 0}
     };
 
     // int** org = create_cage(test[0], test[1], test[2]);
@@ -407,6 +431,7 @@ void test_func(void){
             test_cage_p[i][j] = test[i][j];
         }
     }
+    printf("test_cage\n");
     print_cage(test_cage_p);
 
     // test_cage_p = clockwise(test_cage_p,0);
@@ -415,14 +440,18 @@ void test_func(void){
     // int met = putreach(test_cage_p);
     // printf("putreach %d\n", met);
 
-    int line = three_cube_line(test_cage_p);
-    printf("line_color %d\n", line);
+    vector<int> line = three_cube_line(test_cage_p);
+    for (int i = 0; i < line.size(); i++) {
+        cout << line.at(i) << ", ";
+    }
+    cout << endl;
 
     // bool sita = updownreach(test_cage_p);
     // printf("updownreach %d\n",sita);
 
     test_cage_p = to_canonical(test_cage_p);
 
+    printf("result\n");
     print_cage(test_cage_p);
     delete[] test_cage_p;
     return;
