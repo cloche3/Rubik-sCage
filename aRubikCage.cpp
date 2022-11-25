@@ -86,7 +86,7 @@ int** counterclockwise(int ** cage, int cubeslide){//反時計回り test_finish
         stack[cubeslide][j] = cage[cubeslide][(j+2) %8];
     }
     stack = fallcube(stack);//重力
-    delete[]cage;
+
     return stack;//変更後の盤面
 };
 
@@ -105,7 +105,6 @@ int** clockwise(int ** cage, int cubeslide) {//時計回り test_finish
         cage[cubeslide][(j+2)%8] = stack[cubeslide][j];
     }
     cage = fallcube(cage);//重力
-    delete[] stack;
     return cage;//変更後の盤面
 };
 
@@ -212,95 +211,6 @@ int putreach(/*const */int ** cage) { //test_finish
     return position;
 }
 
-bool updownreach(/*const*/ int ** cage){
-    for (int t = 0; t < 8; t+=2){//1~4枚目
-        if ((cage[0][0+t] == cage[1][1+t] == cage[0][((t+2) % 8)]) && cage[0][((2+t) % 8)] != 0 && (cage[1][0+t] == cage[1][((2+t) % 8)] == cage[2][1+t] == 0)){//山の形
-            printf("1 %d\n",t);
-            return true;
-        }
-        if ((cage[0][0+t] == cage[1][1+t] == cage[2][((2+t) % 8)]) && cage[2][((2+t) % 8)] != 0 && (cage[1][0+t] == cage[2][1+t] == 0)){//真ん中が高い山の形
-            printf("2 %d\n",t);
-            return true;
-        }
-        if ((cage[1][0+t] == cage[2][1+t] == cage[1][((2+t) % 8)]) && cage[1][((2+t) % 8)] != 0 && (cage[2][0+t] == cage[2][((2+t) % 8)]  == 0)){//1段目が埋まった山の形
-            printf("3 %d\n",t);
-            return true;
-        }//失敗
-        if ((cage[1][0+t] == cage[0][1+t] == cage[1][((2+t) % 8)]) && cage[1][((2+t) % 8)] != 0 && (cage[2][0+t] == cage[2][((2+t) % 8)] == cage[1][1+t] == 0)){//谷の形
-            printf("4 %d\n",t);
-            return true;
-        }//miss
-        if ((cage[2][0+t] == cage[0][1+t] == cage[2][((2+t) % 8)]) && cage[2][((2+t) % 8)] != 0 && (cage[1][1+t] == 0)){//真ん中が深い谷の形
-            printf("5 %d\n",t);
-            return true;
-        }
-        if ((cage[2][0+t] == cage[1][1+t] == cage[2][((2+t) % 8)]) && cage[2][((2+t) % 8)] != 0 && (cage[2][1+t] == 0)){//1段目が埋まった谷の形
-            printf("6 %d\n",t);
-            return true;
-        }
-
-        if ((cage[0][0+t] == cage[0][1+t] == cage[1][((2+t) % 8)]) && cage[1][((2+t) % 8)] != 0 && (cage[1][0+t] == cage[1][1+t] == cage[2][((2+t) % 8)] == 0)){//左寄りに2つ並び、1つ1段上にある形
-            printf("7 %d\n",t);
-            return true;
-        }//miss
-        if ((cage[0][0+t] == cage[0][1+t] == cage[2][((2+t) % 8)]) && cage[2][((2+t) % 8)] != 0 && (cage[1][0+t] == cage[1][1+t] == 0)){//左寄りに2つ並び、1つ2段上にある形（反転L字型）
-            printf("8 %d\n",t);
-            return true;
-        }//miss
-        if ((cage[1][0+t] == cage[1][1+t] == cage[2][((2+t) % 8)]) && cage[2][((2+t) % 8)] != 0 && (cage[2][0+t] == cage[2][1+t] == 0)){//1段目が埋まった左寄りに2つ並び、1つ上にある形
-            printf("9 %d\n",t);
-            return true;
-        }//miss
-
-        if ((cage[1][0+t] == cage[1][1+t] == cage[0][((2+t) % 8)]) && cage[0][((2+t) % 8)] != 0 && (cage[2][0+t] == cage[2][1+t] == cage[1][((2+t) % 8)] == 0)){//左寄りに2つ並び、1つ1段下にある形
-            printf("10 %d\n",t);
-            return true;
-        }//miss
-
-        if ((cage[2][0+t] == cage[2][1+t] == cage[0][((2+t) % 8)]) && cage[0][((2+t) % 8)] != 0 && (cage[1][((2+t) % 8)] == 0)){//左寄りに2つ並び、1つ2段下にある形
-            printf("11 %d\n",t);
-            return true;
-        }//miss
-        if ((cage[2][0+t] == cage[2][1+t] == cage[1][((2+t) % 8)]) && cage[1][((2+t) % 8)] != 0 && (cage[2][((2+t) % 8)] == 0)){//1段目が埋まった左寄りに2つ並び、1つ下にある形
-            printf("12 %d\n",t);
-            return true;
-        }//miss
-        if ((cage[1][0+t] == cage[0][1+t] == cage[0][((2+t) % 8)]) && cage[0][((2+t) % 8)] != 0 && (cage[2][0+t] == cage[1][1+t] == cage[1][((2+t) % 8)] == 0)){//右寄りに2つ並び1つ1段上にある形
-            printf("13 %d\n",t);
-            return true;
-        }//miss
-        if ((cage[2][0+t] == cage[0][1+t] == cage[0][((2+t) % 8)]) && cage[0][((2+t) % 8)] != 0 && (cage[1][1+t] == cage[1][((2+t) % 8)] == 0)){//右寄りに2つ並び1つ2段上にある形(L字型)
-            printf("14 %d\n",t);
-            return true;
-        }//miss
-        if ((cage[2][0+t] == cage[1][1+t] == cage[1][((2+t) % 8)]) && cage[1][((2+t) % 8)] != 0 && (cage[2][1+t] == cage[2][((2+t) % 8)] == 0)){//1段目が埋まった右寄りに2つ並び1つ上にある形
-            printf("15 %d\n",t);
-            return true;
-        }//miss
-        if ((cage[0][0+t] == cage[1][1+t] == cage[1][((2+t) % 8)]) && cage[1][((2+t) % 8)] != 0 && (cage[1][0+t] == cage[2][1+t] == cage[2][((2+t) % 8)] == 0)){//右寄りに2つ並び1つ1段下にある形
-            printf("16 %d\n",t);
-            return true;
-        }//miss
-        if ((cage[0][0+t] == cage[2][1+t] == cage[2][((2+t) % 8)]) && cage[2][((2+t) % 8)] != 0 && (cage[1][0+t] == 0)){//右寄りに2つ並び1つ2段下にある形
-            printf("17 %d\n",t);
-            return true;
-        }
-        if ((cage[1][0+t] == cage[2][1+t] == cage[2][((2+t) % 8)]) && cage[2][((2+t) % 8)] != 0 && (cage[2][0+t] == 0)){//1段目が埋まった右寄りに2つ並び1つ下にある形
-            printf("18 %d\n",t);
-            return true;
-        }
-        if ((cage[0][0+t] == cage[2][1+t] == cage[1][((2+t) % 8)]) && cage[1][((2+t) % 8)] != 0 && (cage[1][0+t] == cage[2][((2+t) % 8)] == 0)){//相手が（」）こんな形
-            printf("19 %d\n",t);
-            return true;
-        }//miss
-        if ((cage[1][0+t] == cage[2][1+t] == cage[0][((2+t) % 8)]) && cage[0][((2+t) % 8)] != 0 && (cage[2][0+t] == cage[1][((2+t) % 8)] == 0)){//相手が（反転」）こんな形
-            printf("20 %d\n",t);
-            return true;
-        }//miss
-    }
-    return false;
-}
-
 /** return True if cage1 <= cage2*/
 bool le(int** cage1, int** cage2) {
     for (int i = 0; i < height; i++) {
@@ -313,8 +223,45 @@ bool le(int** cage1, int** cage2) {
     return true;
 }
 
-int ** to_canonical(int ** cage){
-    int **min_cage; // コピー先の盤面
+/*
+int** generate_mirror(int** cage){ //鏡像
+    int **stack  = new int*[height];
+    for (int i = 0; i < height; i++) {
+        stack[i] = new int[num_positions];
+        for (int j = 0; j < num_positions; j++) {
+            stack[i][j] = cage[i][j];
+        }
+    }
+
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < num_positions; j++) {
+            stack[i][((8+j) % 8)] = cage[i][j];
+        }
+    }
+    return stack;
+}
+
+int** rotate_cage(int** cage){ //回転体
+    int** stack  = new int*[height];
+    for (int i = 0; i < height; i++) {
+        stack[i] = new int[num_positions];
+        for (int j = 0; j < num_positions; j++) {
+            stack[i][j] = cage[i][j];
+        }
+    }
+
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < num_positions; j++) {
+            stack[i][((2+j) % 8)] = cage[i][j];
+        }
+    }
+
+    return stack;
+
+}*/
+
+int** to_canonical(int** cage){ //標準形
+    int** min_cage; // コピー先の盤面
     min_cage = new int*[height];
     for (int i = 0; i < height; i++) {
         min_cage[i] = new int[num_positions];
@@ -322,34 +269,38 @@ int ** to_canonical(int ** cage){
             min_cage[i][j] = cage[i][j];
         }
     }
-    for (int board = 0; board < 4; board++){//8状態を保存
+    for (int board = 0; board < 4; board++){ //8状態を保存
+
+        // min_cage = generate_mirror(cage);
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < num_positions; j++) {
-                min_cage[i][((7+j) % 8)] = cage[i][j]; //鏡像
+                min_cage[i][((8+j) % 8)] = cage[i][j];
             }
         }
-        if (le(cage,min_cage)){ // 大小比較
+        if (le(cage, min_cage)){ // 大小比較
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < num_positions; j++) {
-                    cage[i][j] = min_cage[i][j];
+                    min_cage[i][j] = cage[i][j];
                 }
             }
         }
+
+        // min_cage = rotate_cage(cage);
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < num_positions; j++) {
-                min_cage[i][((2+j) % 8)] = cage[i][j]; //対象形
+                min_cage[i][((2+j) % 8)] = cage[i][j];
             }
         }
-        if (le(cage,min_cage)){ // 大小比較
+        if (le(cage, min_cage)){ // 大小比較
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < num_positions; j++) {
-                    cage[i][j] = min_cage[i][j];
+                    min_cage[i][j] = cage[i][j];
                 }
             }
         }
     }
 
-    return min_cage;//標準形
+    return min_cage;
 }
 
 
@@ -415,10 +366,16 @@ void print_cage(int** cage) {
 
 void test_func(void){
     int test[3][8] = {
-        {0, 0, 2, 2, 2, 1, 1, 0},
-        {0, 0, 3, 3, 1, 0, 0, 0},
-        {0, 0, 1, 1, 1, 0, 0, 0}
+        {1, 1, 2, 2, 3, 4, 5, 6},
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0}
     };
+
+    // int test2[3][8] = {
+    //     {6, 5, 4, 3, 2, 2, 1, 1},
+    //     {0, 0, 0, 0, 0, 0, 0, 0},
+    //     {0, 0, 0, 0, 0, 0, 0, 0}
+    // };
 
     // int** org = create_cage(test[0], test[1], test[2]);
     // print_cage(org);
@@ -432,6 +389,14 @@ void test_func(void){
             test_cage_p[i][j] = test[i][j];
         }
     }
+
+    // int ** test_cage_p2 = new int*[height];
+    // for (int i = 0; i < height; i++) {
+    //     test_cage_p2[i] = new int[num_positions];
+    //     for (int j = 0; j < num_positions; j++) {
+    //         test_cage_p2[i][j] = test2[i][j];
+    //     }
+    // }
     printf("test_cage\n");
     print_cage(test_cage_p);
 
@@ -449,6 +414,10 @@ void test_func(void){
 
     // bool sita = updownreach(test_cage_p);
     // printf("updownreach %d\n",sita);
+
+    // bool daisyou = le(test_cage_p, test_cage_p2);
+    // printf("min %d\n", daisyou);
+
 
     test_cage_p = to_canonical(test_cage_p);
 
