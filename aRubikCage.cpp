@@ -43,6 +43,7 @@ int** copy(/*const*/int** cage){
             new_cage[i][j] = cage[i][j];
         }
     }
+    std::memcpy(new_cage, cage, sizeof(2000));
 
     return new_cage;
 };
@@ -336,7 +337,7 @@ int ** to_canonical(int ** cage){
         }
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < num_positions; j++) {
-                min_cage[i][((3+j) % 8)] = cage[i][j]; //対象形
+                min_cage[i][((2+j) % 8)] = cage[i][j]; //対象形
             }
         }
         if (le(cage,min_cage)){ // 大小比較
@@ -440,11 +441,11 @@ void test_func(void){
     // int met = putreach(test_cage_p);
     // printf("putreach %d\n", met);
 
-    vector<int> line = three_cube_line(test_cage_p);
-    for (int i = 0; i < line.size(); i++) {
-        cout << line.at(i) << ", ";
-    }
-    cout << endl;
+    // vector<int> line = three_cube_line(test_cage_p);
+    // for (int i = 0; i < line.size(); i++) {
+    //     cout << line.at(i) << ", ";
+    // }
+    // cout << endl;
 
     // bool sita = updownreach(test_cage_p);
     // printf("updownreach %d\n",sita);
