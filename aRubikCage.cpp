@@ -105,6 +105,8 @@ int** clockwise(int ** cage, int cubeslide) {//時計回り test_finish
         cage[cubeslide][(j+2)%8] = stack[cubeslide][j];
     }
     cage = fallcube(cage);//重力
+    delete[] stack;
+
     return cage;//変更後の盤面
 };
 
@@ -211,18 +213,6 @@ int putreach(/*const */int ** cage) { //test_finish
     return position;
 }
 
-/** return True if cage1 <= cage2*/
-bool le(int** cage1, int** cage2) {
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < num_positions; j++) {
-            if (cage1[i][j] > cage2[i][j]) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
 /*
 int** generate_mirror(int** cage){ //鏡像
     int **stack  = new int*[height];
@@ -260,6 +250,20 @@ int** rotate_cage(int** cage){ //回転体
 
 }*/
 
+/** return True if cage1 <= cage2*/
+bool le(int** cage1, int** cage2) {
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < num_positions; j++) {
+            if (cage1[i][j] > cage2[i][j]) {
+                return false;
+            } else if (cage1[i][j] > cage2[i][j]) {
+                return true;
+            }
+        }
+    }
+    return true;
+}
+
 int** to_canonical(int** cage){ //標準形
     int** min_cage; // コピー先の盤面
     min_cage = new int*[height];
@@ -277,13 +281,21 @@ int** to_canonical(int** cage){ //標準形
                 min_cage[i][((8+j) % 8)] = cage[i][j];
             }
         }
-        if (le(cage, min_cage)){ // 大小比較
+        // 大小比較
+        if (le(min_cage, cage)){ // 大小比較
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < num_positions; j++) {
                     min_cage[i][j] = cage[i][j];
                 }
             }
         }
+        // for (int i = 0; i < height; i++) {
+        //     for (int j = 0; j < num_positions; j++) {
+        //         if (le(cage, min_cage)){
+        //             cage[i][j] = min_cage[i][j];
+        //         }
+        //     }
+        // }
 
         // min_cage = rotate_cage(cage);
         for (int i = 0; i < height; i++) {
@@ -291,15 +303,25 @@ int** to_canonical(int** cage){ //標準形
                 min_cage[i][((2+j) % 8)] = cage[i][j];
             }
         }
-        if (le(cage, min_cage)){ // 大小比較
+        if (le(min_cage, cage)){ // 大小比較
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < num_positions; j++) {
                     min_cage[i][j] = cage[i][j];
                 }
             }
         }
-    }
+        // for (int i = 0; i < height; i++) {
+        //     for (int j = 0; j < num_positions; j++) {
+        //         if (le(cage, min_cage)){
+        //             cage[i][j] = min_cage[i][j];
+        //         }
+        //     }
+        // }
 
+    }
+    if (le(min_cage, cage)){
+            printf("true\n");
+        }
     return min_cage;
 }
 
@@ -366,7 +388,7 @@ void print_cage(int** cage) {
 
 void test_func(void){
     int test[3][8] = {
-        {1, 1, 2, 2, 3, 4, 5, 6},
+        {1, 2, 3, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0}
     };
@@ -423,7 +445,7 @@ void test_func(void){
 
     printf("result\n");
     print_cage(test_cage_p);
-    delete[] test_cage_p;
+    delete [] test_cage_p;
     return;
 }
 
