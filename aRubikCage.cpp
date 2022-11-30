@@ -257,15 +257,17 @@ bool le_in(int** cage1, int** cage2) {
 bool le(int** cage1, int** cage2) {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < num_positions; j++) {
-            if ((cage2[i][j] != 0) && (cage1[i][j] > cage2[i][j])){
-                return true;
-            }else if ((cage1[i][j] != 0) && (cage1[i][j] < cage2[i][j])){
-                return false;
-            }else if ((cage2[i][j] == 0) && (cage1[i][j] > cage2[i][j])){
+            if ((cage2[i][j] == 0) && (cage1[i][j] > cage2[i][j])){
                 return true;
             }
-            if (cage1[i][j] > cage2[i][j]){
+            if ((cage1[i][j] == 0) && (cage1[i][j] < cage2[i][j])){
+                return false;
+            }
+            if ((cage2[i][j] != 0) && (cage1[i][j] > cage2[i][j])){
                 return true;
+            }
+            if ((cage1[i][j] != 0) && (cage1[i][j] < cage2[i][j])){
+                return false;
             }
         }
     }
