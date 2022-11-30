@@ -33,21 +33,31 @@ const int height = 3;   // ケージの高さ
 const int length_of_edge = 3;   // ケージを上から見た正方形の一辺の長さ
 const int num_positions = length_of_edge * 2 + (length_of_edge - 2) * 2;    // 上から見た、ブロックを入れる穴の数。一辺の長さが3のときは8
 
-int** copy(/*const*/int** cage){
-    int **new_cage; // コピー先の盤面
-
-    new_cage = new int*[height];
+/**
+ * すでに存在する盤面 dest に、盤面 src をそのままコピーする
+*/
+void copy(int** src, int** dest) {
     for (int i = 0; i < height; i++) {
-        new_cage[i] = new int[num_positions];
         for (int j = 0; j < num_positions; j++) {
-            new_cage[i][j] = cage[i][j];
+        dest[i][j] = src[i][j];
         }
     }
-    std::memcpy(new_cage, cage, sizeof(2000));
+}
 
-    return new_cage;
+int** copy(int** src){
+    int **dest; // コピー先の盤面
+
+    dest = new int*[height];
+    for(int i = 0; i < height; i++) {
+        dest[i] = new int[num_positions];
+    }
+    copy(src, dest);
+
+    return dest;
 };
 
+
+// cage を画面に表示
 void print_cage(int** cage) {
     for (int i = 0; i < height; i++){
         for (int j = 0; j < num_positions; j++){
@@ -74,15 +84,13 @@ int ** fallcube(int **cage){  //キューブを下に落とす test_finish
 };
 
 int** put(int** cage, int color, int position){//position: キューブを入れる場所（1段のマス数0~7）color入れる色(色数1~6(減らすと1~4)) test_finish
-    copy(cage);//記録
+
     cage[2][position] = color;//入力された場所に指定された色のキューブを入れる
     cage = fallcube(cage);//重力
     return cage;//変更後の盤面
 };
 
 int** counterclockwise(int ** cage, int cubeslide){//反時計回り test_finish
-    copy(cage);//記録
-
     int **stack  = new int*[height];
     for (int i = 0; i < height; i++) {
         stack[i] = new int[num_positions];
@@ -100,7 +108,6 @@ int** counterclockwise(int ** cage, int cubeslide){//反時計回り test_finish
 };
 
 int** clockwise(int ** cage, int cubeslide) {//時計回り test_finish
-    copy(cage);//記録
 
     int **stack  = new int*[height];
     for (int i = 0; i < height; i++) {
@@ -120,7 +127,6 @@ int** clockwise(int ** cage, int cubeslide) {//時計回り test_finish
 };
 
 int** updown(int ** cage) { //test_finish
-    copy(cage);//記録
     for (int j = 0; j < num_positions; j++) {
         int stack = cage[0][j];
         cage[0][j] = cage[2][j];
@@ -222,33 +228,24 @@ int putreach(/*const */int ** cage) { //test_finish
     return position;
 }
 
-/*
-int** rotate_cage(int** cage){ //回転体
-    int** stack  = new int*[height];
-    for (int i = 0; i < height; i++) {
-        stack[i] = new int[num_positions];
-        for (int j = 0; j < num_positions; j++) {
-            stack[i][j] = cage[i][j];
-        }
-    }
+/** cage を時計回りに90度回転したものに置き換える*/
+void rotate_cage(int** cage){ //回転体
+    int** stack  = copy(cage);
 
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < num_positions; j++) {
-            stack[i][((2+j) % 8)] = cage[i][j];
+            cage[i][((2+j) % 8)] = stack[i][j];
         }
     }
-
-    return stack;
-
-}*/
+}
 
 /** return True if cage1 <= cage2*/
-bool le(int** cage1, int** cage2) {
+bool le_in(int** cage1, int** cage2) {
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < num_positions; j++) {
-            if ((cage1[i][j] == 0) && (0 < cage2[i][j])){
+            if ((cage1[i][j] == 0) && (0 != cage2[i][j])){
                 return true;
-            }else if (cage1[i][j] > cage2[i][j]) {
+            }else if (cage1[i][j] < cage2[i][j]) {
                 return false;
             }
         }
@@ -256,92 +253,134 @@ bool le(int** cage1, int** cage2) {
     return true;
 }
 
-int** to_canonical(int** cage){ //標準形
-    int** min_cage; // 最小盤面
-    min_cage = new int*[height];
+/** return True if cage1 > cage2 入れ替え*/
+bool le(int** cage1, int** cage2) {
     for (int i = 0; i < height; i++) {
-        min_cage[i] = new int[num_positions];
         for (int j = 0; j < num_positions; j++) {
-            min_cage[i][j] = cage[i][j];
-        }
-    }
-    int** rotate_cage; // 回転体
-    rotate_cage = new int*[height];
-    for (int i = 0; i < height; i++) {
-        rotate_cage[i] = new int[num_positions];
-        for (int j = 0; j < num_positions; j++) {
-            rotate_cage[i][j] = cage[i][j];
-        }
-    }
-    int count = 1; //test
-    for (int board = 0; board < 4; board++){ //8状態を保存
-
-        for (int i = 0; i < height; i++) { //鏡像
-            swap(cage[i][(7+board) % 8],cage[i][1+board]);
-            swap(cage[i][(6+board) % 8],cage[i][2+board]);
-            swap(cage[i][(5+board) % 8],cage[i][3+board]);
-        }
-
-        printf("mirror %d\n",count);
-        if (le(min_cage, cage)){// 大小比較
-            printf("true\n");
-        }
-        print_cage(cage);
-        count += 1;
-
-        if (le(min_cage, cage)){ // 大小比較
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < num_positions; j++) {
-                    min_cage[i][j] = cage[i][j];
-                }
+            if ((cage2[i][j] != 0) && (cage1[i][j] > cage2[i][j])){
+                return true;
+            }else if ((cage1[i][j] != 0) && (cage1[i][j] < cage2[i][j])){
+                return false;
+            }else if ((cage2[i][j] == 0) && (cage1[i][j] > cage2[i][j])){
+                return true;
+            }
+            if (cage1[i][j] > cage2[i][j]){
+                return true;
             }
         }
-        for (int i = 0; i < height; i++) { // 鏡像を戻す
-            swap(cage[i][(7+board) % 8], cage[i][1+board]);
-            swap(cage[i][(6+board) % 8], cage[i][2+board]);
-            swap(cage[i][(5+board) % 8], cage[i][3+board]);
-        }
-
-        // for (int i = 0; i < height; i++) {
-        //     for (int j = 0; j < num_positions; j++) {
-        //         if (le(cage, min_cage)){
-        //             cage[i][j] = min_cage[i][j];
-        //         }
-        //     }
-        // }
-
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < num_positions; j++) {
-                rotate_cage[i][j] = cage[i][(((board*2)+2+j) % 8)];
-            }
-        }
-
-        printf("rotate %d\n",count);
-        if (le(min_cage, rotate_cage)){
-            printf("true\n");
-        }
-        print_cage(rotate_cage);
-        count += 1;
-
-        if (le(min_cage, rotate_cage)){ // 大小比較
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < num_positions; j++) {
-                    min_cage[i][j] = rotate_cage[i][j];
-                }
-            }
-        }
-        // for (int i = 0; i < height; i++) {
-        //     for (int j = 0; j < num_positions; j++) {
-        //         if (le(cage, min_cage)){
-        //             cage[i][j] = min_cage[i][j];
-        //         }
-        //     }
-        // }
-
     }
-    delete [] rotate_cage;
-    return min_cage;
+    return true;
 }
+
+int** create_swap_cage(int** cage) {
+    int** swapped = copy(cage);
+    for (int i = 0; i < height; i++) { //鏡像
+        swap(swapped[i][7], swapped[i][1]);
+        swap(swapped[i][6], swapped[i][2]);
+        swap(swapped[i][5], swapped[i][3]);
+    }
+    return swapped;
+}
+
+
+/**
+ * cage を標準形に書き換える
+*/
+void to_canonical(int** org) {
+    #define TEST_TO_CANONICAL 1
+
+    int **tmp = copy(org);
+
+    // 最初の鏡像が小さかったら org 書き換え
+    int ** swapped = create_swap_cage(tmp);
+    if (le(swapped, org)) {
+        #ifdef TEST_TO_CANONICAL
+            printf("start \n");
+            print_cage(swapped);
+        #endif
+        copy(swapped, org);
+    }
+    delete[] swapped;
+
+    // 回転を3回
+    for (int r = 0; r < 3; r++) {
+        rotate_cage(tmp);
+        #ifdef TEST_TO_CANONICAL
+            printf("tmp\n");
+            print_cage(tmp);
+        #endif
+        if (le(tmp, org)) {
+            copy(swapped, org);
+        }
+
+        int ** swapped = create_swap_cage(tmp);
+        #ifdef TEST_TO_CANONICAL
+            printf("swap\n");
+            print_cage(swapped);
+        #endif
+        if (le(swapped, org)) {
+            copy(swapped, org);
+        }
+        delete[] swapped;
+    }
+    delete[] tmp;
+}
+
+
+// int** to_canonical_okamoto(int** cage){ //標準形
+//     int** min_cage = copy(cage); // 最小盤面
+
+//     int** rotate_cage_base = rotate_cage(cage); // 回転体
+
+//     int count = 1; //test
+//     for (int board = 0; board < 4; board++){ //8状態を保存
+
+//         for (int i = 0; i < height; i++) { //鏡像
+//             swap(cage[i][(7+board) % 8],cage[i][1+board]);
+//             swap(cage[i][(6+board) % 8],cage[i][2+board]);
+//             swap(cage[i][(5+board) % 8],cage[i][3+board]);
+//         }
+
+//         printf("mirror %d\n",count);
+//         if (le(min_cage, cage)){// 大小比較
+//             printf("true\n");
+//         }
+//         print_cage(cage);
+//         count += 1;
+
+//         if (le(min_cage, cage)){ // 大小比較
+//             for (int i = 0; i < height; i++) {
+//                 for (int j = 0; j < num_positions; j++) {
+//                     min_cage[i][j] = cage[i][j];
+//                 }
+//             }
+//         }
+//         for (int i = 0; i < height; i++) { // 鏡像を戻す
+//             swap(cage[i][(7+board) % 8], cage[i][1+board]);
+//             swap(cage[i][(6+board) % 8], cage[i][2+board]);
+//             swap(cage[i][(5+board) % 8], cage[i][3+board]);
+//         }
+
+//         rotate_cage(cage)
+
+//         printf("rotate %d\n",count);
+//         if (le(min_cage, rotate_cage)){
+//             printf("true\n");
+//         }
+//         print_cage(rotate_cage);
+//         count += 1;
+
+//         if (le(min_cage, rotate_cage)){ // 大小比較
+//             for (int i = 0; i < height; i++) {
+//                 for (int j = 0; j < num_positions; j++) {
+//                     min_cage[i][j] = rotate_cage[i][j];
+//                 }
+//             }
+//         }
+//     }
+//     delete [] rotate_cage;
+//     return min_cage;
+// }
 
 
 
@@ -380,39 +419,18 @@ vector<int> three_cube_line(int ** cage) { //　3つ揃った状態、引き分�
     return buffer_color;
 }
 
-// int **create_cage(int* cage_0, int* cage_1, int* cage_2) {
-//     int** new_cage;
-//     new_cage = new int*[3];
-//     for (int i = 0; i < 3; i++) {
-//         new_cage[i] = new int[8];
-//     }
-//     memcpy(new_cage[0], cage_0, sizeof(cage_0));
-//     memcpy(new_cage[1], cage_1, sizeof(cage_1));
-//     memcpy(new_cage[2], cage_2, sizeof(cage_2));
-//     return new_cage;
-// }
-
-// cage を画面に表示
-
-
-
 void test_func(void){
     int test[3][8] = {
-        {3, 0, 0, 0, 0, 0, 1, 2},
+        {0, 0, 1, 2, 3, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0}
     };
 
     // int test2[3][8] = {
-    //     {6, 5, 4, 3, 2, 2, 1, 1},
+    //     {1, 2, 3, 0, 0, 0, 0, 0},
     //     {0, 0, 0, 0, 0, 0, 0, 0},
     //     {0, 0, 0, 0, 0, 0, 0, 0}
     // };
-
-    // int** org = create_cage(test[0], test[1], test[2]);
-    // print_cage(org);
-    // int** rotated = clockwise(org, 1);
-    // print_cage(rotated);
 
     int ** test_cage_p = new int*[height];
     for (int i = 0; i < height; i++) {
@@ -447,7 +465,10 @@ void test_func(void){
     // bool sita = updownreach(test_cage_p);
     // printf("updownreach %d\n",sita);
 
-    test_cage_p = to_canonical(test_cage_p);
+    // bool sita = le(test_cage_p, test_cage_p2);
+    // cout << sita << endl;
+
+    to_canonical(test_cage_p);
 
     printf("result\n");
     print_cage(test_cage_p);
