@@ -92,3 +92,59 @@ bool updownreach(/*const*/ int ** cage){
     }
     return false;
 }
+
+
+// int** to_canonical_okamoto(int** cage){ //標準形
+//     int** min_cage = copy(cage); // 最小盤面
+
+//     int** rotate_cage_base = rotate_cage(cage); // 回転体
+
+//     int count = 1; //test
+//     for (int board = 0; board < 4; board++){ //8状態を保存
+
+//         for (int i = 0; i < height; i++) { //鏡像
+//             swap(cage[i][(7+board) % 8],cage[i][1+board]);
+//             swap(cage[i][(6+board) % 8],cage[i][2+board]);
+//             swap(cage[i][(5+board) % 8],cage[i][3+board]);
+//         }
+
+//         printf("mirror %d\n",count);
+//         if (le(min_cage, cage)){// 大小比較
+//             printf("true\n");
+//         }
+//         print_cage(cage);
+//         count += 1;
+
+//         if (le(min_cage, cage)){ // 大小比較
+//             for (int i = 0; i < height; i++) {
+//                 for (int j = 0; j < num_positions; j++) {
+//                     min_cage[i][j] = cage[i][j];
+//                 }
+//             }
+//         }
+//         for (int i = 0; i < height; i++) { // 鏡像を戻す
+//             swap(cage[i][(7+board) % 8], cage[i][1+board]);
+//             swap(cage[i][(6+board) % 8], cage[i][2+board]);
+//             swap(cage[i][(5+board) % 8], cage[i][3+board]);
+//         }
+
+//         rotate_cage(cage)
+
+//         printf("rotate %d\n",count);
+//         if (le(min_cage, rotate_cage)){
+//             printf("true\n");
+//         }
+//         print_cage(rotate_cage);
+//         count += 1;
+
+//         if (le(min_cage, rotate_cage)){ // 大小比較
+//             for (int i = 0; i < height; i++) {
+//                 for (int j = 0; j < num_positions; j++) {
+//                     min_cage[i][j] = rotate_cage[i][j];
+//                 }
+//             }
+//         }
+//     }
+//     delete [] rotate_cage;
+//     return min_cage;
+// }
