@@ -2,7 +2,7 @@
 
 int main(void) {
     int test[3][8] = {
-        {3, 2, 1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 1, 2, 3, 0},
         {0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0}
     };
@@ -30,14 +30,9 @@ int main(void) {
     }
 
     bool sita = le(test_cage_p, test_cage_p2);
-
-    print_cage(test_cage_p);
     if(sita) {
-        cout << "<" << endl;
+        cout << "cage1 < cage2" << endl;
     } else {
-        cout << ">" << endl;
+        cout << "cage1 > cage2" << endl;
     }
-    print_cage(test_cage_p2);
-
-
 }
