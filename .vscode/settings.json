@@ -21,6 +21,7 @@
     ],
     "python.jediEnabled": false,
     "files.associations": {
+        "*.py": "python",
         "array": "cpp",
         "atomic": "cpp",
         "bit": "cpp",
@@ -65,7 +66,11 @@
         "ostream": "cpp",
         "stdexcept": "cpp",
         "streambuf": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "cstring": "cpp",
+        "optional": "cpp",
+        "fstream": "cpp",
+        "sstream": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 
