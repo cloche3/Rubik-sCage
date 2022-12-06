@@ -33,6 +33,18 @@ const int height = 3;   // ケージの高さ
 const int length_of_edge = 3;   // ケージを上から見た正方形の一辺の長さ
 const int num_positions = length_of_edge * 2 + (length_of_edge - 2) * 2;    // 上から見た、ブロックを入れる穴の数。一辺の長さが3のときは8
 
+int **make_cage(int base_cage[height][num_positions]){ //2次元配列をポインタにする　test_finish
+    int **cage = new int*[height];
+    for (int i = 0; i < height; i++) {
+        cage[i] = new int[num_positions];
+        for (int j = 0; j < num_positions; j++) {
+            cage[i][j] = base_cage[i][j];
+        }
+    }
+
+    return cage;
+}
+
 /**
  * すでに存在する盤面 dest に、盤面 src をそのままコピーする
 */
@@ -315,15 +327,17 @@ vector<int> three_cube_line(int ** cage) { //　3つ揃った状態、引き分�
             }
         }
     }
+    std::sort(buffer_color.begin(), buffer_color.end());
     return buffer_color;
 }
 
 void test_func(void){
     int test[3][8] = {
-        {1, 2, 3, 0, 0, 0, 0, 0},
+        {4, 4, 4, 0, 1, 1, 1, 0},
         {0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0}
     };
+    int ** test_cage_p = make_cage(test);
 
     // int test2[3][8] = {
     //     {0, 0, 0, 0, 1, 2, 3, 0},
@@ -331,21 +345,6 @@ void test_func(void){
     //     {0, 0, 0, 0, 0, 0, 0, 0}
     // };
 
-    int ** test_cage_p = new int*[height];
-    for (int i = 0; i < height; i++) {
-        test_cage_p[i] = new int[num_positions];
-        for (int j = 0; j < num_positions; j++) {
-            test_cage_p[i][j] = test[i][j];
-        }
-    }
-
-    // int ** test_cage_p2 = new int*[height];
-    // for (int i = 0; i < height; i++) {
-    //     test_cage_p2[i] = new int[num_positions];
-    //     for (int j = 0; j < num_positions; j++) {
-    //         test_cage_p2[i][j] = test2[i][j];
-    //     }
-    // }
     printf("test_cage1\n");
     print_cage(test_cage_p);
 
@@ -375,6 +374,8 @@ void test_func(void){
     // }
 
     // to_canonical(test_cage_p);
+
+
 
     printf("result\n");
     print_cage(test_cage_p);

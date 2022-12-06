@@ -4,34 +4,23 @@
 #include <cstring>
 #include <vector>
 
-/*
-変数variable/argument/return/用途
-copy/ cage / new_cage/ 盤面のコピー
-fallcube/ cage/ 0/ キューブを下に落とす（重力）
-put/ cage, color, position/ cage/ キューブを入れる場所を決める
-flip/ cage, cubeslide/ 0/ 1行右にずらす
-
-
-引数argument
-cage[i][j] i段目(0~2)　左上から右回りに通るマスj個目　下表は上から見た穴
-0 | 1 | 2
-7 | x | 3
-6 | 5 | 4
-組み合わせとして
-(0,1,2)1枚目　(2,3,4)　2枚目　(4,5,6) 3枚目　(6,7,0) 4枚目　とする
-値が小さい方向が左、値が大きい方向が右
-color 色の種類(1~6 , 0 = 空)
-position ブロックを入れる時の穴決定(0~7)
-cubeslide ケージを回転させる段決定(0~2)
-
-
-*/
-
 using namespace std;
 
 const int height = 3;   // ケージの高さ
 const int length_of_edge = 3;   // ケージを上から見た正方形の一辺の長さ
 const int num_positions = length_of_edge * 2 + (length_of_edge - 2) * 2;    // 上から見た、ブロックを入れる穴の数。一辺の長さが3のときは8
+
+int** make_cage(int base_cage[height][num_positions]){ //2次元配列をポインタにする　test_finish
+    int** cage = new int*[height];
+    for (int i = 0; i < height; i++) {
+        cage[i] = new int[num_positions];
+        for (int j = 0; j < num_positions; j++) {
+            cage[i][j] = base_cage[i][j];
+        }
+    }
+
+    return cage;
+}
 
 /**
  * すでに存在する盤面 dest に、盤面 src をそのままコピーする
@@ -315,5 +304,6 @@ vector<int> three_cube_line(int ** cage) { //　3つ揃った状態、引き分�
             }
         }
     }
+    std::sort(buffer_color.begin(), buffer_color.end());
     return buffer_color;
 }
