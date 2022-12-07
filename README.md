@@ -148,3 +148,41 @@ bool updownreach(/*const*/ int ** cage){
 //     delete [] rotate_cage;
 //     return min_cage;
 // }
+
+
+<!--
+#include <iostream>
+#include <vector>
+
+// ルービックケージを表すクラス
+class RubikCage {
+ public:
+  RubikCage() {}
+
+  // 各面を回転させる関数
+  void rotate(int face, bool clockwise) {
+    // 回転処理を行う
+  }
+
+  // ケージの状態を表示する関数
+  void display() const {
+    // ケージの状態を表示する
+  }
+
+ private:
+  // ケージの状態を表す変数など
+};
+
+int main() {
+  // ルービックケージのインスタンスを生成
+  RubikCage rc;
+
+  // 各面を回転させる
+  rc.rotate(0, true);  // 1面を時計回りに回転
+  rc.rotate(1, false); // 2面を反時計回りに回転
+
+  // ケージの状態を表示
+  rc.display();
+
+  return 0;
+} -->
