@@ -186,3 +186,77 @@ int main() {
 
   return 0;
 } -->
+
+void put_rule(int** cage, vector<int> color_palette, int player){
+    if (player == 1){
+        for (int color = 1; color < 4; color++){ // 先手の色
+            bool is_filled = true; // フラグ
+            if (color_palette[color] > 0){ // 自分の色のキューブがあるかどうか
+                for (int t = 0; t < 3; t++){
+                    if (cage[0][t*2] == 0){ // 角が空である時
+                        cage = put(cage, color, (t*2));
+                        color_palette.at(color) = color_palette.at(color) - 1; // キューブの使用
+                        is_filled = false;
+                        break;
+                    }else if (cage[0][(t*2)+1] != 0 && cage[1][(t*2)+1] == 0){ //中央が空である時
+                        cage = put(cage, color, ((t*2)+1));
+                        color_palette.at(color) = color_palette.at(color) - 1; // キューブの使用
+                        is_filled = false;
+                        break;
+                    }else if (cage[0][(t*2)+1] != 0 && cage[1][(t*2)+1] == 0){ //2段目が空である時
+                        cage = put(cage, color , (t+2));
+                        color_palette.at(color) = color_palette.at(color) - 1; // キューブの使用
+                        is_filled = false;
+                        break;
+                    }
+                }
+            }
+            if (is_filled){
+                if (color_palette[color] > 0){
+                    for (int j = 0; j < num_positions; j++){
+                        if (cage[2][j] == 0){
+                            cage = put(cage, color, j);
+                            color_palette.at(color) = color_palette.at(color) - 1; // キューブの使用
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }else{
+        for (int color = 4; color < 7; color++){ // 後手の色 4,5,6
+            bool is_filled = true; // フラグ
+            if (color_palette[color] > 0){ // 自分の色のキューブがあるかどうか
+                for (int t = 0; t < 3; t++){
+                    if (cage[0][t*2] == 0){ // 角が空である時
+                        cage = put(cage, color, (t*2));
+                        color_palette.at(color) = color_palette.at(color) - 1; // キューブの使用
+                        is_filled = false;
+                        break;
+                    }else if (cage[0][(t*2)+1] != 0 && cage[1][(t*2)+1] == 0){ //中央が空である時
+                        cage = put(cage, color, ((t*2)+1));
+                        color_palette.at(color) = color_palette.at(color) - 1; // キューブの使用
+                        is_filled = false;
+                        break;
+                    }else if (cage[0][(t*2)+1] != 0 && cage[1][(t*2)+1] == 0){ //2段目が空である時
+                        cage = put(cage, color , (t+2));
+                        color_palette.at(color) = color_palette.at(color) - 1; // キューブの使用
+                        is_filled = false;
+                        break;
+                    }
+                }
+            }
+            if (is_filled){
+                if (color_palette[color] > 0){
+                    for (int j = 0; j < num_positions; j++){
+                        if (cage[2][j] == 0){
+                            cage = put(cage, color, j);
+                            color_palette.at(color) = color_palette.at(color) - 1; // キューブの使用
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

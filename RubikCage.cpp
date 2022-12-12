@@ -135,11 +135,38 @@ int** updown(int ** cage) { //test_finish
     return cage;//変更後の盤面提示
 }
 
+// りーちとなっている、場所と色のぺあのべくとるを返す
+vector<pair<int, int> > find_all_reach(int** cage) {
+    vector<pair<int, int> > found_reach;
 
+    for (int j = 0; j < num_positions; j++) {
+        // 一番下の空の場所を探す
+        i = 0;
+        while (i < height && cage[i][j] != 0) {
+            i++;
+        }
+        if (i == height) { // 一番上まで入っている場合
+            continue;
+        }
+
+        // [i][j] がリーチになっているかをチェック
+        if (j % 2 == 0) { // 場所 j が角の時
+
+        } else { // 場所 j が角ではない時
+
+        }
+    }
+
+    return found_reach;
+}
+
+// 使用不備があるので、破棄決定
 pair<int, int> putreach(/*const */int ** cage) { //test_finish
     int position; //キューブを入れる箇所
     int color; //揃っている色
-    for (int j = 0; j < num_positions; j++){//j個目縦リーチ判定
+
+    //縦リーチ判定
+    for (int j = 0; j < num_positions; j++){
         if (cage[0][j] == cage[1][j] && cage[0][j] != 0) { //縦に赤|赤|空の時
             position = j;
             color = cage[0][j];
@@ -147,7 +174,8 @@ pair<int, int> putreach(/*const */int ** cage) { //test_finish
         }
     }
 
-    for (int i = 0; i < height; i++){//i段(0~2)数横リーチ判定
+    //i段(0~2)数横リーチ判定
+    for (int i = 0; i < height; i++){
         for (int t = 0; t < 8; t += 2){
             if (i == 0){// 1段目
                 if (cage[i][0+t] == cage[i][1+t] && cage[i][((2+t) % 8)] == 0 && cage[i][1+t] != 0){//横に|赤|赤|空|の時1枚目
@@ -348,6 +376,7 @@ vector<int> three_cube_line(int ** cage) { // 3つ揃った状態、引き分け
     return buffer_color;
 }
 
+/*
 void test_func(void){
     int test[3][8] = {
         {1, 0, 0, 0, 0, 0, 0, 0},
@@ -400,11 +429,12 @@ void test_func(void){
     delete [] test_cage_p;
     return;
 }
+*/
 
-
-
+/*
 int main (int argc, char *argv[]){
     test_func();
     // main program here
     return 0;
 }
+*/
