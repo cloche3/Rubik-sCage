@@ -241,7 +241,7 @@ pair<int, int> putreach(/*const */int ** cage) { //test_finish
 
     }
 
-    return std::make_pair(position, color);
+    return std::make_pair(position, 0);
 }
 
 /** cage を時計回りに90度回転したものに置き換える*/
@@ -312,7 +312,7 @@ void to_canonical(int** org) {
     delete[] tmp;
 }
 
-vector<int> three_cube_line(int ** cage) { //　3つ揃った状態、引き分け（2色以上）も加味 test_finish
+vector<int> three_cube_line(int ** cage) { // 3つ揃った状態、引き分け（2色以上）も加味 test_finish
     std::vector<int> buffer_color;   //色の一時保存
     for (int j = 0; j < num_positions; j++) {//j列目縦3揃い判定
         if ((cage[0][j] == cage[1][j]) && (cage[1][j] == cage[2][j])){

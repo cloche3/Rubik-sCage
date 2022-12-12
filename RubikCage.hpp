@@ -218,7 +218,7 @@ pair<int, int> putreach(/*const */int ** cage) { //test_finish
 
     }
 
-    return std::make_pair(position, color);
+    return std::make_pair(position, 0);
 }
 
 /** cage を時計回りに90度回転したものに置き換える*/
