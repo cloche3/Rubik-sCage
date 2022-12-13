@@ -95,10 +95,79 @@ int ** fallcube(int **cage){  //キューブを下に落とす test_finish
     return cage;////コピーせず今の盤面を上書き（変更後の盤面）
 };
 
+/** cage を時計回りに90度回転したものに置き換える*/
+void rotate_cage(int** cage){ //回転体
+    int** stack  = copy(cage);
+
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < num_positions; j++) {
+            cage[i][((2+j) % 8)] = stack[i][j];
+        }
+    }
+}
+
+/**
+ * return True iff cage1 is less than or equal to cage2
+ * i.e., cage1 <= cage2
+*/
+bool le(int** cage1, int** cage2) {
+    for(int i = 0; i < height; i++) {
+        for (int j = 0; j < num_positions; j++) {
+            if (cage1[i][j] < cage2[i][j]) {
+                return true;
+            } else if (cage1[i][j] > cage2[i][j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+int** create_swap_cage(int** cage) {
+    int** swapped = copy(cage);
+    for (int i = 0; i < height; i++) { //鏡像
+        swap(swapped[i][7], swapped[i][1]);
+        swap(swapped[i][6], swapped[i][2]);
+        swap(swapped[i][5], swapped[i][3]);
+    }
+    return swapped;
+}
+
+
+/**
+ * cage を標準形に書き換える
+*/
+void to_canonical(int** org) {
+    int **tmp = copy(org);
+
+    // 最初の鏡像が小さかったら org 書き換え
+    int ** swapped = create_swap_cage(tmp);
+    if (le(swapped, org)) {
+        copy(swapped, org);
+    }
+    delete[] swapped;
+
+    // 回転を3回
+    for (int r = 0; r < 3; r++) {
+        rotate_cage(tmp);
+        if (le(tmp, org)) {
+            copy(tmp, org);
+        }
+
+        int ** swapped = create_swap_cage(tmp);
+        if (le(swapped, org)) {
+            copy(swapped, org);
+        }
+        delete[] swapped;
+    }
+    delete[] tmp;
+}
+
 int** put(int** cage, int color, int position){//position: キューブを入れる場所（1段のマス数0~7）color入れる色(色数1~6(減らすと1~4)) test_finish
 
     cage[2][position] = color;//入力された場所に指定された色のキューブを入れる
     cage = fallcube(cage);//重力
+    to_canonical(cage); // 標準形変更
     return cage;//変更後の盤面
 };
 
@@ -109,7 +178,7 @@ int** counterclockwise(int ** cage, int cubeslide){//反時計回り test_finish
         stack[cubeslide][j] = cage[cubeslide][(j+2) %8];
     }
     stack = fallcube(stack);//重力
-
+    to_canonical(stack); // 標準形変更
     return stack;//変更後の盤面
 };
 
@@ -121,7 +190,7 @@ int** clockwise(int ** cage, int cubeslide) {//時計回り test_finish
     }
     cage = fallcube(cage);//重力
     delete[] stack;
-
+    to_canonical(cage); // 標準形変更
     return cage;//変更後の盤面
 };
 
@@ -132,16 +201,17 @@ int** updown(int ** cage) { //test_finish
         cage[2][j] = stack;//上下入れ替え
     }
     cage = fallcube(cage);//重力
+    to_canonical(cage); // 標準形変更
     return cage;//変更後の盤面提示
 }
 
-// りーちとなっている、場所と色のぺあのべくとるを返す
+// リーチとなっている、場所と色のペアのvectorを返す
 vector<pair<int, int> > find_all_reach(int** cage) {
-    vector<pair<int, int> > found_reach;
+    vector<pair<int, int> > found_reach; //発見したリーチに空いてる場所とリーチの色
 
     for (int j = 0; j < num_positions; j++) {
         // 一番下の空の場所を探す
-        i = 0;
+        int i = 0;
         while (i < height && cage[i][j] != 0) {
             i++;
         }
@@ -151,6 +221,7 @@ vector<pair<int, int> > find_all_reach(int** cage) {
 
         // [i][j] がリーチになっているかをチェック
         if (j % 2 == 0) { // 場所 j が角の時
+
 
         } else { // 場所 j が角ではない時
 
@@ -272,73 +343,7 @@ pair<int, int> putreach(/*const */int ** cage) { //test_finish
     return std::make_pair(position, 0);
 }
 
-/** cage を時計回りに90度回転したものに置き換える*/
-void rotate_cage(int** cage){ //回転体
-    int** stack  = copy(cage);
 
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < num_positions; j++) {
-            cage[i][((2+j) % 8)] = stack[i][j];
-        }
-    }
-}
-
-/**
- * return True iff cage1 is less than or equal to cage2
- * i.e., cage1 <= cage2
-*/
-bool le(int** cage1, int** cage2) {
-    for(int i = 0; i < height; i++) {
-        for (int j = 0; j < num_positions; j++) {
-            if (cage1[i][j] < cage2[i][j]) {
-                return true;
-            } else if (cage1[i][j] > cage2[i][j]) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-int** create_swap_cage(int** cage) {
-    int** swapped = copy(cage);
-    for (int i = 0; i < height; i++) { //鏡像
-        swap(swapped[i][7], swapped[i][1]);
-        swap(swapped[i][6], swapped[i][2]);
-        swap(swapped[i][5], swapped[i][3]);
-    }
-    return swapped;
-}
-
-
-/**
- * cage を標準形に書き換える
-*/
-void to_canonical(int** org) {
-    int **tmp = copy(org);
-
-    // 最初の鏡像が小さかったら org 書き換え
-    int ** swapped = create_swap_cage(tmp);
-    if (le(swapped, org)) {
-        copy(swapped, org);
-    }
-    delete[] swapped;
-
-    // 回転を3回
-    for (int r = 0; r < 3; r++) {
-        rotate_cage(tmp);
-        if (le(tmp, org)) {
-            copy(tmp, org);
-        }
-
-        int ** swapped = create_swap_cage(tmp);
-        if (le(swapped, org)) {
-            copy(swapped, org);
-        }
-        delete[] swapped;
-    }
-    delete[] tmp;
-}
 
 vector<int> three_cube_line(int ** cage) { // 3つ揃った状態、引き分け（2色以上）も加味 test_finish
     std::vector<int> buffer_color;   //色の一時保存
