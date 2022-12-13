@@ -205,9 +205,9 @@ int** updown(int ** cage) { //test_finish
     return cage;//変更後の盤面提示
 }
 
-// リーチとなっている、場所と色のペアのvectorを返す
+// リーチとなっている、色と場所のペアのvectorを返す
 vector<pair<int, int> > find_all_reach(int** cage) {
-    vector<pair<int, int> > found_reach; //発見したリーチに空いてる場所とリーチの色
+    vector<pair<int, int> > found_reach; //発見したリーチの色と空いてる場所
 
     for (int j = 0; j < num_positions; j++) {
         // 一番下の空の場所を探す
@@ -221,7 +221,14 @@ vector<pair<int, int> > find_all_reach(int** cage) {
 
         // [i][j] がリーチになっているかをチェック
         if (j % 2 == 0) { // 場所 j が角の時
+            if (i == 0){ // 一番下の段の時
 
+            }else if (i == 1) // 2段目のとき
+            {
+
+            }else{ // 3段目のとき
+
+            }
 
         } else { // 場所 j が角ではない時
 
@@ -232,16 +239,17 @@ vector<pair<int, int> > find_all_reach(int** cage) {
 }
 
 // 使用不備があるので、破棄決定
-pair<int, int> putreach(/*const */int ** cage) { //test_finish
-    int position; //キューブを入れる箇所
-    int color; //揃っている色
+vector<pair<int, int> > putreach(/*const */int ** cage) { //test_finish
+    int position = -1; //キューブを入れる箇所
+    int color = 0; //揃っている色
+    vector<pair<int, int> > found_reach; //発見したリーチの色と空いてる場所
 
     //縦リーチ判定
     for (int j = 0; j < num_positions; j++){
         if (cage[0][j] == cage[1][j] && cage[0][j] != 0) { //縦に赤|赤|空の時
             position = j;
             color = cage[0][j];
-            return std::make_pair(position, color);
+            found_reach.push_back(std::make_pair(color, position));
         }
     }
 
@@ -252,51 +260,51 @@ pair<int, int> putreach(/*const */int ** cage) { //test_finish
                 if (cage[i][0+t] == cage[i][1+t] && cage[i][((2+t) % 8)] == 0 && cage[i][1+t] != 0){//横に|赤|赤|空|の時1枚目
                     position = (2+t) % 8;
                     color = cage[i][0+t];
-                    return std::make_pair(position, color);
+                    found_reach.push_back(std::make_pair(color, position));
                 }
                 if (cage[i][1+t] == cage[i][((2+t) % 8)] && cage[i][0+t] == 0 && cage[i][1+t] != 0){//|空|赤|赤|の時
                     position = 0+t;
                     color = cage[i][1+t];
-                    return std::make_pair(position, color);
+                    found_reach.push_back(std::make_pair(color, position));
                 }
                 if (cage[i][0+t] == cage[i][((2+t) % 8)] && cage[i][0+t] != 0 && cage[i][1+t] == 0){//横に|赤|空|赤|の時
                     position = 1+t;
                     color = cage[i][0+t];
-                    return std::make_pair(position, color);
+                    found_reach.push_back(std::make_pair(color, position));
                 }
             }
             if (i == 1 && cage[i-1][0+t] != 0 && cage[i-1][1+t] != 0 && cage[i-1][((2+t) % 8)] != 0){//1段目が空いていない状態
                 if (cage[i][0+t] == cage[i][1+t] && cage[i][((2+t) % 8)] == 0 && cage[i][1+t] != 0){//横に|赤|赤|空|
                     position = (2+t) % 8;
                     color = cage[i][0+t];
-                    return std::make_pair(position, color);
+                    found_reach.push_back(std::make_pair(color, position));
                 }
                 if (cage[i][1+t] == cage[i][((2+t) % 8)] && cage[i][0+t] == 0 && cage[i][1+t] != 0){//|空|赤|赤|の時
                     position = 0+t;
                     color = cage[i][1+t];
-                    return std::make_pair(position, color);
+                    found_reach.push_back(std::make_pair(color, position));
                 }
                 if (cage[i][0+t] == cage[i][((2+t) % 8)] && cage[i][0+t] != 0 && cage[i][1+t] == 0){//横に|赤|空|赤|の時
                     position = 1+t;
                     color = cage[i][0+t];
-                    return std::make_pair(position, color);
+                    found_reach.push_back(std::make_pair(color, position));
                 }
             }
             if (i == 2 && cage[i-1][0+t] != 0 && cage[i-1][1+t] != 0 && cage[i-1][((2+t) % 8)] != 0){//2段目が空いていない状態
                 if (cage[i][0+t] == cage[i][1+t] && cage[i][((2+t) % 8)] == 0 && cage[i][1+t] != 0){//横に|赤|赤|空|
                     position = (2+t) % 8;
                     color = cage[i][0+t];
-                    return std::make_pair(position, color);
+                    found_reach.push_back(std::make_pair(color, position));
                 }
                 if (cage[i][1+t] == cage[i][((2+t) % 8)] && cage[i][0+t] == 0 && cage[i][1+t] != 0){//横に|空|赤|赤|の時
                     position = 0+t;
                     color = cage[i][1+t];
-                    return std::make_pair(position, color);
+                    found_reach.push_back(std::make_pair(color, position));
                 }
                 if (cage[i][0+t] == cage[i][((2+t) % 8)] && cage[i][0+t] != 0 && cage[i][1+t] == 0){//横に|赤|空|赤|の時
                     position = 1+t;
                     color = cage[i][0+t];
-                    return std::make_pair(position, color);
+                    found_reach.push_back(std::make_pair(color, position));
                 }
             }
         }
@@ -307,40 +315,39 @@ pair<int, int> putreach(/*const */int ** cage) { //test_finish
             if (cage[1][1+t] == cage[2][((2+t) % 8)] && cage[1][1+t] != 0 && cage[0][0+t] == 0){//1段目に空
                 position = 0+t;
                 color = cage[1][1+t];
-                return std::make_pair(position, color);
+                found_reach.push_back(std::make_pair(color, position));
             }
             if (cage[1][1+t] == cage[0][0+t] && cage[1][1+t] != 0 && cage[2][((2+t) % 8)] == 0){//3段目に空
                 position = (2+t) % 8;
                 color = cage[1][1+t];
-                return std::make_pair(position, color);
+                found_reach.push_back(std::make_pair(color, position));
             }
             if (cage[0][0+t] == cage[2][((2+t) % 8)] && cage[0][0+t] != 0 && cage[1][1+t] == 0){//真ん中に空
                 position = 1+t;
                 color = cage[0][0+t];
-                return std::make_pair(position, color);
+                found_reach.push_back(std::make_pair(color, position));
             }
         }
         if (cage[0][1+t] != 0 && cage[1][0+t] != 0){//右下下がり
             if (cage[1][1+t] == cage[0][((2+t) % 8)] && cage[1][1+t] != 0 && cage[2][0+t] == 0){//1段目に空
                 position = 0+t;
                 color = cage[1][1+t];
-                return std::make_pair(position, color);
+                found_reach.push_back(std::make_pair(color, position));
             }
             if (cage[1][1+t] == cage[0][0+t] && cage[1][1+t] != 0 && cage[0][((2+t) % 8)] == 0){//3段目に空
                 position = (2+t) % 8;
                 color = cage[1][1+t];
-                return std::make_pair(position, color);
+                found_reach.push_back(std::make_pair(color, position));
             }
             if (cage[2][0+t] == cage[0][((2+t) % 8)] && cage[0][((2+t) % 8)] != 0 && cage[1][1+t] == 0){//真ん中に空
                 position = 1+t;
                 color = cage[2][0+t];
-                return std::make_pair(position, color);
+                found_reach.push_back(std::make_pair(color, position));
             }
         }
-
     }
-
-    return std::make_pair(position, 0);
+    sort(found_reach.begin(), found_reach.end());
+    return found_reach;
 }
 
 
@@ -381,7 +388,7 @@ vector<int> three_cube_line(int ** cage) { // 3つ揃った状態、引き分け
     return buffer_color;
 }
 
-/*
+/***/
 void test_func(void){
     int test[3][8] = {
         {1, 0, 0, 0, 0, 0, 0, 0},
@@ -434,7 +441,7 @@ void test_func(void){
     delete [] test_cage_p;
     return;
 }
-*/
+/*/
 
 /*
 int main (int argc, char *argv[]){

@@ -2,12 +2,14 @@
 #include <vector>
 #include <map>
 
-const int num_colors = 6 ; //色の数
-const int cubes = 4 ; //1色あたりのキューブの数
-const int first_player = 1; //先手番号
-const int second_player = -1; //後手番号
-
 using namespace std;
+
+const int num_colors = 6 ; // 色の数
+const int cubes = 4 ; // 1色あたりのキューブの数
+const int first_player = 1; // 先手番号
+const int second_player = -1; // 後手番号
+const bool allow_flip = true; // 上下反転を認めるかどうか
+const vector<int> allow_rotate = {1, 1, 1}; // 回転する段を設定する。1の時回転できる
 
 /**
  * 使う色とキューブ個数のvector
@@ -65,85 +67,31 @@ pair<bool, int> is_finished(int** cage) {
 }
 
 /**
- * キューブを入れる時の優先ルール test_fin
+ * キューブを入れる時の条件
+ * 引数　cage:盤面, color_palette:現在所持している色のキューブ, player:先手か後手か, j: 入れる箇所
  *
 */
-void put_rule(int** cage, vector<int> color_palette, int player){
+
+int ** put_rule(int** cage, vector<int> color_palette, int player, int j){
     if (player == 1){
-        for (int color = 1; color < 4; color++){ // 先手の色
-            bool is_filled = true; // フラグ
-            if (color_palette[color] > 0){ // 自分の色のキューブがあるかどうか
-                for (int t = 0; t < 3; t++){
-                    if (cage[0][t*2] == 0){ // 角が空である時
-                        cage = put(cage, color, (t*2));
-                        color_palette.at(color) = color_palette.at(color) - 1; // キューブの使用
-                        is_filled = false;
-                        break;
-                    }else if (cage[0][(t*2)+1] != 0 && cage[1][(t*2)+1] == 0){ //中央が空である時
-                        cage = put(cage, color, ((t*2)+1));
-                        color_palette.at(color) = color_palette.at(color) - 1; // キューブの使用
-                        is_filled = false;
-                        break;
-                    }else if (cage[0][(t*2)+1] != 0 && cage[1][(t*2)+1] == 0){ //2段目が空である時
-                        cage = put(cage, color , (t+2));
-                        color_palette.at(color) = color_palette.at(color) - 1; // キューブの使用
-                        is_filled = false;
-                        break;
-                    }
-                }
-            }
-            if (is_filled){
-                if (color_palette[color] > 0){
-                    for (int j = 0; j < num_positions; j++){
-                        if (cage[2][j] == 0){
-                            cage = put(cage, color, j);
-                            color_palette.at(color) = color_palette.at(color) - 1; // キューブの使用
-                            break;
-                        }
-                    }
-                    break;
+        for (int color = 1; color < 4; color++){ // 先手の色 1, 2, 3
+            if (color_palette.at(color) > 0){ // 自分の色のキューブがあるかどうか
+                if (cage[2][j] == 0){ //キューブを入れられるかどうか
+                    return put(cage, color, j);
                 }
             }
         }
     }else{
-        for (int color = 4; color < 7; color++){ // 後手の色 4,5,6
-            bool is_filled = true; // フラグ
-            if (color_palette[color] > 0){ // 自分の色のキューブがあるかどうか
-                for (int t = 0; t < 3; t++){
-                    if (cage[0][t*2] == 0){ // 角が空である時
-                        cage = put(cage, color, (t*2));
-                        color_palette.at(color) = color_palette.at(color) - 1; // キューブの使用
-                        is_filled = false;
-                        break;
-                    }else if (cage[0][(t*2)+1] != 0 && cage[1][(t*2)+1] == 0){ //中央が空である時
-                        cage = put(cage, color, ((t*2)+1));
-                        color_palette.at(color) = color_palette.at(color) - 1; // キューブの使用
-                        is_filled = false;
-                        break;
-                    }else if (cage[0][(t*2)+1] != 0 && cage[1][(t*2)+1] == 0){ //2段目が空である時
-                        cage = put(cage, color , (t+2));
-                        color_palette.at(color) = color_palette.at(color) - 1; // キューブの使用
-                        is_filled = false;
-                        break;
-                    }
-                }
-            }
-            if (is_filled){
-                if (color_palette[color] > 0){
-                    for (int j = 0; j < num_positions; j++){
-                        if (cage[2][j] == 0){
-                            cage = put(cage, color, j);
-                            color_palette.at(color) = color_palette.at(color) - 1; // キューブの使用
-                            break;
-                        }
-                    }
-                    break;
+        for (int color = 4; color < 7; color++){ // 後手の色 4, 5, 6
+            if (color_palette.at(color) > 0){ // 自分の色のキューブがあるかどうか
+                if (cage[2][j] == 0){
+                    return put(cage, color, j);
                 }
             }
         }
     }
+    return 0;
 }
-
 
 
 /**
@@ -152,75 +100,98 @@ void put_rule(int** cage, vector<int> color_palette, int player){
  * 戻り値 勝ったplayer(先手:1 後手:-1 引き分け:0)
  * last_two_moves 0~2：回転した段数, 3：反転したかどうか,-1：前の手番に入れている
  */
-int winner_old(int** cage, int player, pair<int, int> last_two_moves){
-    std::pair<int, int> putwin; // 置いて勝つ場所と色
+int winner(int** cage, int player, pair<int, int> last_two_moves){
+    vector<pair<int, int> > putwin; // 置いて勝つ色と場所
     std::vector<int>color_set = color_palette(); // キューブの個数と色 [0,4,4,4,4,4,4] 0:空 1~3:先手の色 4~6:後手の色
     std::vector<int **>next_cage; // 次の盤面の保存
 
-    if((is_finished(cage)).first){ //元の盤面 終了判定でtrueなら終了
+    if((is_finished(cage)).first){ //元の盤面に3つキューブが揃っているか 終了判定でtrueなら終了
         return (is_finished(cage)).second; // 1:先手の勝利, -1:後手の勝利, 0:引きわけ
     };
 
-    putwin = putreach(cage);// キューブを置いて勝つ盤面
-    if (player == color_2_player(putwin.second)){ //手番の人の色かどうか
-        if (color_set[putwin.second] > 0){ // 入れる色のキューブがあるのか
-            return player; //その時のplayerの勝利
+    putwin = putreach(cage);// キューブを置いて勝つ盤面（リーチ
+    if (player == -1){ // 後手の時
+        std::sort(putwin.rbegin(), putwin.rend()); // 色を降順にする
+    }
+    for (int line = 0; line < putwin.size(); line++){
+        if (player == color_2_player(putwin[line].first)){ //手番の人の色がリーチの場合
+            if (color_set[putwin[line].first] > 0){ // 入れる色のキューブがあるのか
+                return player; //その時のplayerの勝利
+            }
+        }
+        if ( (player*-1) == color_2_player(putwin[line].first)) { //相手の色がリーチの場合
+            if (player == 1){ // 先手の時
+                for (int color = 3; color > 1; color--){ // 先手の色 3, 2, 1
+                    if (color_set[color] > 0){ // 自分の色のキューブがあるかどうか
+                        if (cage[2][putwin[line].second] == 0){ //キューブを入れられるかどうか
+                            cage = put(cage, color, (putwin[line].second));
+                            break;
+                        }
+                    }
+                }
+            }else{ //後手の時
+                for (int color = num_colors; color > 4; color--){ // 後手の色 4, 5, 6
+                    if (color_set[color] > 0){ // 自分の色のキューブがあるかどうか
+                        if (cage[2][putwin[line].second] == 0){
+                            cage = put(cage, color, (putwin[line].second));
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 
-    // ここから先は優先手を指定
-
-    if (last_two_moves.second >= 0){ // 前回の自分の番の時キューブを入れなかった時
-        put_rule(cage, color_set, player);
-        last_two_moves.first = -1;
+    // ここから先は次の盤面生成
+    // キューブを入れた時の盤面の格納
+    for (int j = 0; j < num_positions; j++){
+        int** put_new_cage = put_rule(cage, color_set, player, j);
+        if (put_new_cage == 0){
+            break;
+        }
+        next_cage.push_back(put_new_cage);
     }
-    if (player != color_2_player(putwin.second)){ // 自分の番に相手がリーチの場合
-        /* code */
+
+    // 盤面を回転した時
+    for (int i = 0; i < height; i++) {
+        if (allow_rotate.at(i) == 1){ // 回転を許可するかどうか
+            next_cage.push_back(clockwise(cage, i)); // 時計回り
+            next_cage.push_back(counterclockwise(cage, i)); // 反時計回り
+        }
+    }
+    // 上下反転した時
+    if (allow_flip){ //　上下反転を許可するかどうか
+        next_cage.push_back(updown(cage));
+        last_two_moves.first = 3;
     }
 
-
-
-    last_two_moves = std::make_pair(last_two_moves.second, last_two_moves.first); //pairの入れ替え
-    winner(cage, (player* -1), last_two_moves); // 再帰
-
-    return -1; // 後手の勝利
+    // 再帰開始
+    int all = 1;
+    for (int t = 0; t < next_cage.size(); t++){
+        last_two_moves = std::make_pair(last_two_moves.second, last_two_moves.first); //pairの入れ替え
+        int result = winner(next_cage.at(t), (player* -1), last_two_moves); // 再帰
+        if (result == player){
+            return player;
+        }else{
+            all *= result;
+        }
+    }
+    return (all == 0) ? 0 : -player;
 }
-/*
- * 勝った盤面保存
-*/
-
-// vector<int **> board(int** cage, int player, pair<int, int> last_two_moves){
-//     std::vector<int **> win_board; //勝った盤面の保存
-//     std::pair<int, int> putwin; // キューブを置いて勝つ盤面
-
-//     for (;;){
-//         if (player == color_2_player(putwin.second)){
-//             std::pair<int, int> putwin = putreach(cage);
-//             int ** win_cage = put(cage, (putwin.first), putwin.second);
-//             board.push_back(win_cage);
-//         }
-
-//         if((is_finished(cage)).first){
-//             break;
-//         };
-//     }
-//     return win_board;
-// }
 
 int main(int argc, char *argv[]){
     int first_cage[3][8] = {
-        {1, 2, 3, 4, 5, 6, 1, 2},
-        {3, 4, 5, 6, 1, 2, 3, 4},
-        {5, 6, 1, 2, 3, 4, 5, 0}
+        {0, 0, 0, 0, 1, 0, 0, 0},
+        {0, 0, 0, 0, 1, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0}
     };
     int **cage = make_cage(first_cage);
-    print_cage(cage);
 
-    // std::pair<bool, int> p = is_finished(cage);
-    // std::cout << p.first << std::endl;
-    // std::cout << p.second << std::endl;
 
-    vector<int> line = {0,0,0,0,0,0,1};
-    put_rule(cage, line, -1);
-    print_cage(cage);
+    int player = 1;
+    std::pair<int, int> two_moves = std::make_pair(-1, -1);
+
+        cout << winner(cage, player, two_moves);
+
+
 }
