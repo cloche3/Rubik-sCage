@@ -224,6 +224,7 @@ vector<pair<int, int> > find_all_reach(int** cage) {
             if (i == 0){ // 一番下の段の時
 
             }else if (i == 1) // 2段目のとき
+
             {
 
             }else{ // 3段目のとき
@@ -231,6 +232,14 @@ vector<pair<int, int> > find_all_reach(int** cage) {
             }
 
         } else { // 場所 j が角ではない時
+            if (i == 0){ // 一番下の段の時
+
+            }else if (i == 1) // 2段目のとき
+            {
+
+            }else{ // 3段目のとき
+
+            }
 
         }
     }
@@ -238,10 +247,9 @@ vector<pair<int, int> > find_all_reach(int** cage) {
     return found_reach;
 }
 
-// 使用不備があるので、破棄決定
 vector<pair<int, int> > putreach(/*const */int ** cage) { //test_finish
-    int position = -1; //キューブを入れる箇所
-    int color = 0; //揃っている色
+    int position; //キューブを入れる箇所
+    int color ; //揃っている色
     vector<pair<int, int> > found_reach; //発見したリーチの色と空いてる場所
 
     //縦リーチ判定
@@ -387,66 +395,3 @@ vector<int> three_cube_line(int ** cage) { // 3つ揃った状態、引き分け
     std::sort(buffer_color.begin(), buffer_color.end());
     return buffer_color;
 }
-
-/***/
-void test_func(void){
-    int test[3][8] = {
-        {1, 0, 0, 0, 0, 0, 0, 0},
-        {1, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0}
-    };
-    int ** test_cage_p = make_cage(test);
-
-    // int test2[3][8] = {
-    //     {0, 0, 0, 0, 1, 2, 3, 0},
-    //     {0, 0, 0, 0, 0, 0, 0, 0},
-    //     {0, 0, 0, 0, 0, 0, 0, 0}
-    // };
-
-    printf("test_cage1\n");
-    print_cage(test_cage_p);
-
-    // printf("test_cage2\n");
-    // print_cage(test_cage_p2);
-
-    // test_cage_p = clockwise(test_cage_p,0);
-    // test_cage_p = counterclockwise(test_cage_p, 0);
-
-    // std::pair<int, int> p = putreach(test_cage_p);
-    // std::cout << p.first << std::endl;
-    // std::cout << p.second << std::endl;
-
-    // vector<int> line = three_cube_line(test_cage_p);
-    // for (int i = 0; i < line.size(); i++) {
-    //     cout << line.at(i) << ", ";
-    // }
-    // cout << endl;
-
-    // bool sita = updownreach(test_cage_p);
-    // printf("updownreach %d\n",sita);
-
-    // bool sita = le(test_cage_p, test_cage_p2);
-    // if(sita) {
-    //     cout << "cage1 < cage2" << endl;
-    // } else {
-    //     cout << "cage1 > cage2" << endl;
-    // }
-
-    // to_canonical(test_cage_p);
-
-
-
-    printf("result\n");
-    print_cage(test_cage_p);
-    delete [] test_cage_p;
-    return;
-}
-/*/
-
-/*
-int main (int argc, char *argv[]){
-    test_func();
-    // main program here
-    return 0;
-}
-*/
