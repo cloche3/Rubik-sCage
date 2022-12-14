@@ -5,7 +5,7 @@
 using namespace std;
 
 const int num_colors = 6 ; // 色の数
-const int cubes = 4 ; // 1色あたりのキューブの数
+const int cubes = (24/num_colors) ; // 1色あたりのキューブの数
 const int first_player = 1; // 先手番号
 const int second_player = -1; // 後手番号
 const bool allow_flip = true; // 上下反転を認めるかどうか
@@ -74,7 +74,7 @@ pair<bool, int> is_finished(int** cage) {
 
 int ** put_rule(int** cage, vector<int> color_palette, int player, int j){
     if (player == 1){
-        for (int color = 1; color < 4; color++){ // 先手の色 1, 2, 3
+        for (int color = 1; color < (num_colors/2+1); color++){ // 先手の色 1, 2, 3
             if (color_palette.at(color) > 0){ // 自分の色のキューブがあるかどうか
                 if (cage[2][j] == 0){ //キューブを入れられるかどうか
                     return put(cage, color, j);
@@ -82,7 +82,7 @@ int ** put_rule(int** cage, vector<int> color_palette, int player, int j){
             }
         }
     }else{
-        for (int color = 4; color < 7; color++){ // 後手の色 4, 5, 6
+        for (int color = (num_colors/2+1); color < (num_colors+1); color++){ // 後手の色 4, 5, 6
             if (color_palette.at(color) > 0){ // 自分の色のキューブがあるかどうか
                 if (cage[2][j] == 0){
                     return put(cage, color, j);
@@ -121,7 +121,7 @@ int winner(int** cage, int player, pair<int, int> last_two_moves){
         }
         if ( (player*-1) == color_2_player(putwin[line].first)) { //相手の色がリーチの場合
             if (player == 1){ // 先手の時
-                for (int color = 3; color > 1; color--){ // 先手の色 3, 2, 1
+                for (int color = (num_colors/2); color > 1; color--){ // 先手の色 3, 2, 1
                     if (color_set[color] > 0){ // 自分の色のキューブがあるかどうか
                         if (cage[2][putwin[line].second] == 0){ //キューブを入れられるかどうか
                             cage = put(cage, color, (putwin[line].second));
@@ -130,7 +130,7 @@ int winner(int** cage, int player, pair<int, int> last_two_moves){
                     }
                 }
             }else{ //後手の時
-                for (int color = num_colors; color > 4; color--){ // 後手の色 4, 5, 6
+                for (int color = num_colors; color > (num_colors/2+1); color--){ // 後手の色 4, 5, 6
                     if (color_set[color] > 0){ // 自分の色のキューブがあるかどうか
                         if (cage[2][putwin[line].second] == 0){
                             cage = put(cage, color, (putwin[line].second));
