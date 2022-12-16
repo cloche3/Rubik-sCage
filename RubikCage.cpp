@@ -254,10 +254,12 @@ vector<pair<int, int> > putreach(/*const */int ** cage) { //test_finish
 
     //縦リーチ判定
     for (int j = 0; j < num_positions; j++){
-        if (cage[0][j] == cage[1][j] && cage[0][j] != 0) { //縦に赤|赤|空の時
+        if (cage[0][j] != 0){
+            if (cage[0][j] == cage[1][j] && cage[2][j] == 0) { //縦に赤|赤|空の時
             position = j;
             color = cage[0][j];
             found_reach.push_back(std::make_pair(color, position));
+            }
         }
     }
 

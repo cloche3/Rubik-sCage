@@ -1,6 +1,5 @@
 #include "RubikCage.cpp"
 #include <vector>
-#include <map>
 
 using namespace std;
 
@@ -73,7 +72,6 @@ pair<bool, int> is_finished(int** cage) {
 */
 
 int ** put_rule(int** cage, vector<int> color_palette, int player, int j){
-
     if (player == 1){
         for (int color = 1; color < (num_colors/2+1); color++){ // 先手の色 1, 2, 3(制限あり1,2)
             if (color_palette.at(color) > 0){ // 自分の色のキューブがあるかどうか
@@ -117,7 +115,7 @@ int ** reach_brock_put_rule(int** cage, vector<int> color_palette, int player, i
             }
         }
     }
-    return 0;
+    return cage;
 }
 /**
  * 今まで生成した盤面と異なる盤面であるかどうか
@@ -125,19 +123,23 @@ int ** reach_brock_put_rule(int** cage, vector<int> color_palette, int player, i
  * voidのほうがいい
 */
 
-bool different_board(vector<int**>next_cage, int** cage) {
-    for (int t = 0; t < next_cage.size(); t++){
-        int**check_cage = next_cage.at(t); // 確認する盤面
-        int count_check = 0;
+bool different_board(std::vector<int** >stack_cage, int** cage) {
+    for (int t = 0; t < stack_cage.size(); t++){
+        int** check_cage = stack_cage.at(t); // 確認する盤面
+        bool is_different = false;
         for(int i = 0; i < height; i++) {
             for (int j = 0; j < num_positions; j++) {
-                if (check_cage[i][j] == cage[i][j]) {
-                    count_check++;
-                }
-                if (count_check == (height*num_positions)) {
-                    return false;
+                if (check_cage[i][j] != cage[i][j]) {
+                    is_different = true;
+                    break;
                 }
             }
+            if (is_different) {
+                break;
+            }
+        }
+        if (! is_different) {
+            return false;
         }
     }
     return true;
@@ -150,12 +152,11 @@ bool different_board(vector<int**>next_cage, int** cage) {
  * last_two_moves 0~2：回転した段数, 3：反転したかどうか,-1：前の手番に入れている
  */
 int winner(int** cage, int player, pair<int, int> last_two_moves){
-    // #define DEBUG_WINNER
-    // #define DEBUG_RESULT
+    #define DEBUG_WINNER
+    #define DEBUG_RESULT
     vector<pair<int, int> > putwin; // 置いて勝つ色と場所
     std::vector<int>color_set = color_palette(); // キューブの個数と色 [0,4,4,4,4,4,4] イテレータが0:空 1~3:先手の色 4~6:後手の色 (制限あり:[0,6,6,6,6]0:空 1,2:先手 3,4:後手)
     std::vector<int **>next_cage; // 次の盤面の保存
-    // next_cage.resize(next_cage.max_size()); // 最大化
     int** copy_cage; // コピーする盤面
 
     #ifdef DEBUG_WINNER
@@ -181,7 +182,7 @@ int winner(int** cage, int player, pair<int, int> last_two_moves){
         if (player == color_2_player(putwin[line].first)){ //手番の人の色がリーチの場合
             if (color_set[putwin[line].first] > 0){ // 入れる色のキューブがあるのか
                 #ifdef DEBUG_RESULT
-                cout << " リーチ:"<< endl;
+                cout << " リーチ"<< endl;
                 #endif
                 return player; //その時のplayerの勝利
             }
@@ -211,7 +212,7 @@ int winner(int** cage, int player, pair<int, int> last_two_moves){
 
     // ここから先は次の盤面生成
     // キューブを入れた時の盤面の格納
-    for (int j = 0; j < num_positions; j++){
+    for (int j = 3; j < num_positions; j++){
         copy_cage = copy(cage);
         copy_cage = put_rule(copy_cage, color_set, player, j);
         if (different_board(next_cage, copy_cage)){
@@ -284,7 +285,7 @@ int winner(int** cage, int player, pair<int, int> last_two_moves){
         int result = winner(next_cage.at(t), (player* -1), last_two_moves); // 再帰
         if (result == player){
             #ifdef DEBUG_RESULT
-            cout << " 再帰1:"<< endl;
+            cout << " 再帰1"<< endl;
             #endif
             return player;
         }else{
@@ -292,7 +293,7 @@ int winner(int** cage, int player, pair<int, int> last_two_moves){
         }
     }
     #ifdef DEBUG_RESULT
-    cout << " 再帰2:"<< endl;
+    cout << " 再帰2"<< endl;
     #endif
     return (all == 0) ? 0 : -player;
 }

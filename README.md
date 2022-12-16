@@ -260,3 +260,9 @@ void put_rule(int** cage, vector<int> color_palette, int player){
         }
     }
 }
+
+int first_cage[3][8] = {
+        {0, 0, 0, 4, 3, 2, 1, 0},
+        {0, 0, 0, 0, 0, 1, 4, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0}
+    };

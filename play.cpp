@@ -2,9 +2,9 @@
 
 void R_test_func(void){
     int test[3][8] = {
-        {0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0}
+        {1, 0, 0, 0, 1, 2, 3, 0},
+        {1, 0, 0, 0, 2, 3, 4, 0},
+        {0, 0, 0, 0, 0, 0, 3, 0}
     };
     int ** test_cage_p = make_cage(test);
     // int test2[3][8] = {
@@ -23,11 +23,11 @@ void R_test_func(void){
     // test_cage_p = clockwise(test_cage_p,0);
     // test_cage_p = counterclockwise(test_cage_p, 0);
 
-    // vector<pair<int, int> > p = putreach(test_cage_p);
-    // for (int i = 0; i < p.size(); i++){
-    //     cout << p[i].first <<endl;
-    //     cout << p[i].second <<endl;
-    // }
+    vector<pair<int, int> > p = putreach(test_cage_p);
+    for (int i = 0; i < p.size(); i++){
+        cout << p[i].first <<endl;
+        cout << p[i].second <<endl;
+    }
 
     // vector<int> line = three_cube_line(test_cage_p);
     // for (int i = 0; i < line.size(); i++) {
@@ -59,14 +59,14 @@ int main (int argc, char *argv[]){
 
     // R_test_func();
     int first_cage[3][8] = {
-        {1, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0}
     };
     int **cage = make_cage(first_cage);
     to_canonical(cage);
     print_cage(cage);
-    int player = -1;
+    int player = 1;
 
     // std::pair<bool, int> win_test = is_finished(cage);
     // cout << std::boolalpha << win_test.first;
@@ -75,6 +75,12 @@ int main (int argc, char *argv[]){
     // // int **next_cage = put_rule(cage,color_palette(), player, 7);
     // print_cage(next_cage);
 
+    // std:vector<int**>v;
+    // v.push_back(cage);
+    // if (!(different_board(v, cage)))
+    // {
+    //     cout << "false";
+    // }
 
     std::pair<int, int> two_moves = std::make_pair(-1, -1);
     cout << "call winner(cage, player, two_moves); in play.cpp with" << endl;
