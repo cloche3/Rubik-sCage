@@ -1,5 +1,5 @@
 #include "winline.cpp"
-
+/**
 void R_test_func(void){
     int test[3][8] = {
         {1, 0, 0, 0, 1, 2, 3, 0},
@@ -19,15 +19,15 @@ void R_test_func(void){
     // printf("test_cage2\n");
     // print_cage(test_cage_p2);
 
-    // test_cage_p = put(test_cage_p,1,1);
+    test_cage_p = put(test_cage_p,1,9);
     // test_cage_p = clockwise(test_cage_p,0);
     // test_cage_p = counterclockwise(test_cage_p, 0);
 
-    vector<pair<int, int> > p = putreach(test_cage_p);
-    for (int i = 0; i < p.size(); i++){
-        cout << p[i].first <<endl;
-        cout << p[i].second <<endl;
-    }
+    // vector<pair<int, int> > p = putreach(test_cage_p);
+    // for (int i = 0; i < p.size(); i++){
+    //     cout << p[i].first <<endl;
+    //     cout << p[i].second <<endl;
+    // }
 
     // vector<int> line = three_cube_line(test_cage_p);
     // for (int i = 0; i < line.size(); i++) {
@@ -52,12 +52,10 @@ void R_test_func(void){
     delete [] test_cage_p;
     return;
 }
+/*/
 
 
-
-int main (int argc, char *argv[]){
-
-    // R_test_func();
+int main (){
     int first_cage[3][8] = {
         {0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0},

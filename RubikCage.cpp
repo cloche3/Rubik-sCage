@@ -80,7 +80,7 @@ void print_cage(int** cage) {
     printf("\n");
 }
 
-int ** fallcube(int **cage){  //キューブを下に落とす test_finish
+void fallcube(int **cage){  //キューブを下に落とす test_finish
     for (int j=0; j < num_positions; j++){
         for (int under = 0; under < 2; under++){
             for (int i = 0; i < 2; i++){    //0,1段のみ
@@ -92,8 +92,7 @@ int ** fallcube(int **cage){  //キューブを下に落とす test_finish
             }
         }
     }
-    return cage;////コピーせず今の盤面を上書き（変更後の盤面）
-};
+}
 
 /** cage を時計回りに90度回転したものに置き換える*/
 void rotate_cage(int** cage){ //回転体
@@ -145,7 +144,10 @@ void to_canonical(int** org) {
     if (le(swapped, org)) {
         copy(swapped, org);
     }
-    delete[] swapped;
+    for (int i = 0; i < height; i++){
+        delete [] swapped [i];
+    }
+    delete [] swapped;
 
     // 回転を3回
     for (int r = 0; r < 3; r++) {
@@ -158,18 +160,25 @@ void to_canonical(int** org) {
         if (le(swapped, org)) {
             copy(swapped, org);
         }
-        delete[] swapped;
+        for (int i = 0; i < height; i++){
+            delete [] swapped [i];
+        }
+        delete [] swapped;
     }
-    delete[] tmp;
+    for (int i = 0; i < height; i++){
+        delete [] tmp [i];
+    }
+    delete [] tmp;
+
 }
 
-int** put(int** cage, int color, int position){//position: キューブを入れる場所（1段のマス数0~7）color入れる色(色数1~6(減らすと1~4)) test_finish
-
-    cage[2][position] = color;//入力された場所に指定された色のキューブを入れる
-    cage = fallcube(cage);//重力
-    to_canonical(cage); // 標準形変更
-    return cage;//変更後の盤面
-};
+void put(int** cage, int color, int position){//position: キューブを入れる場所（1段のマス数0~7）color入れる色(色数1~6(減らすと1~4)) test_finish
+    if (position <= num_positions) {
+        cage[2][position] = color;//入力された場所に指定された色のキューブを入れる
+        fallcube(cage);//重力
+        to_canonical(cage); // 標準形変更
+    }
+}
 
 int** counterclockwise(int ** cage, int cubeslide){//反時計回り test_finish
     int **stack  = copy(cage);
@@ -177,7 +186,7 @@ int** counterclockwise(int ** cage, int cubeslide){//反時計回り test_finish
     for (int j = 0; j < num_positions; j++) {
         stack[cubeslide][j] = cage[cubeslide][(j+2) %8];
     }
-    stack = fallcube(stack);//重力
+    fallcube(stack);//重力
     to_canonical(stack); // 標準形変更
     return stack;//変更後の盤面
 };
@@ -188,7 +197,7 @@ int** clockwise(int ** cage, int cubeslide) {//時計回り test_finish
     for (int j = 0; j < num_positions ; j++) {
         cage[cubeslide][(j+2)%8] = stack[cubeslide][j];
     }
-    cage = fallcube(cage);//重力
+    fallcube(cage);//重力
     delete[] stack;
     to_canonical(cage); // 標準形変更
     return cage;//変更後の盤面
@@ -200,7 +209,7 @@ int** updown(int ** cage) { //test_finish
         cage[0][j] = cage[2][j];
         cage[2][j] = stack;//上下入れ替え
     }
-    cage = fallcube(cage);//重力
+    fallcube(cage);//重力
     to_canonical(cage); // 標準形変更
     return cage;//変更後の盤面提示
 }
@@ -356,7 +365,7 @@ vector<pair<int, int> > putreach(/*const */int ** cage) { //test_finish
             }
         }
     }
-    sort(found_reach.begin(), found_reach.end());
+    sort(found_reach.begin(), found_reach.end()); // 昇順化
     return found_reach;
 }
 
