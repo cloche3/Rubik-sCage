@@ -80,7 +80,7 @@ void print_cage(int** cage) {
     printf("\n");
 }
 
-void fallcube(int **cage){  //キューブを下に落とす test_finish
+int ** fallcube(int **cage){  //キューブを下に落とす test_finish
     for (int j=0; j < num_positions; j++){
         for (int under = 0; under < 2; under++){
             for (int i = 0; i < 2; i++){    //0,1段のみ
@@ -92,6 +92,7 @@ void fallcube(int **cage){  //キューブを下に落とす test_finish
             }
         }
     }
+    return cage;
 }
 
 /** cage を時計回りに90度回転したものに置き換える*/
@@ -144,9 +145,6 @@ void to_canonical(int** org) {
     if (le(swapped, org)) {
         copy(swapped, org);
     }
-    for (int i = 0; i < height; i++){
-        delete [] swapped [i];
-    }
     delete [] swapped;
 
     // 回転を3回
@@ -160,24 +158,19 @@ void to_canonical(int** org) {
         if (le(swapped, org)) {
             copy(swapped, org);
         }
-        for (int i = 0; i < height; i++){
-            delete [] swapped [i];
-        }
         delete [] swapped;
-    }
-    for (int i = 0; i < height; i++){
-        delete [] tmp [i];
     }
     delete [] tmp;
 
 }
 
-void put(int** cage, int color, int position){//position: キューブを入れる場所（1段のマス数0~7）color入れる色(色数1~6(減らすと1~4)) test_finish
+int ** put(int** cage, int color, int position){//position: キューブを入れる場所（1段のマス数0~7）color入れる色(色数1~6(減らすと1~4)) test_finish
     if (position <= num_positions) {
         cage[2][position] = color;//入力された場所に指定された色のキューブを入れる
         fallcube(cage);//重力
         to_canonical(cage); // 標準形変更
     }
+    return cage;
 }
 
 int** counterclockwise(int ** cage, int cubeslide){//反時計回り test_finish
