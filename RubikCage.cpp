@@ -165,11 +165,9 @@ void to_canonical(int** org) {
 }
 
 int ** put(int** cage, int color, int position){//position: キューブを入れる場所（1段のマス数0~7）color入れる色(色数1~6(減らすと1~4)) test_finish
-    if (position <= num_positions) {
-        cage[2][position] = color;//入力された場所に指定された色のキューブを入れる
-        fallcube(cage);//重力
-        to_canonical(cage); // 標準形変更
-    }
+    cage[2][position] = color;//入力された場所に指定された色のキューブを入れる
+    fallcube(cage);//重力
+    to_canonical(cage); // 標準形変更
     return cage;
 }
 
