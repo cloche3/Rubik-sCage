@@ -145,6 +145,9 @@ void to_canonical(int** org) {
     if (le(swapped, org)) {
         copy(swapped, org);
     }
+    for (int i = 0; i < height; i++){
+        delete [] swapped[i];
+    }
     delete [] swapped;
 
     // 回転を3回
@@ -153,12 +156,18 @@ void to_canonical(int** org) {
         if (le(tmp, org)) {
             copy(tmp, org);
         }
-
         int ** swapped = create_swap_cage(tmp);
         if (le(swapped, org)) {
             copy(swapped, org);
         }
+        for (int i = 0; i < height; i++){
+            delete [] swapped[i];
+        }
         delete [] swapped;
+    }
+
+    for (int i = 0; i < height; i++){
+        delete [] tmp [i];
     }
     delete [] tmp;
 
@@ -184,7 +193,6 @@ int** counterclockwise(int ** cage, int cubeslide){//反時計回り test_finish
 
 int** clockwise(int ** cage, int cubeslide) {//時計回り test_finish
     int **stack  = copy(cage);
-
     for (int j = 0; j < num_positions ; j++) {
         cage[cubeslide][(j+2)%8] = stack[cubeslide][j];
     }

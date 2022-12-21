@@ -164,8 +164,8 @@ int winner(int** cage, int player, pair<int, int> last_two_moves){
 
     // ここから先は次の盤面生成
     // キューブを入れた時の盤面の格納
-    for (int position = 0; position < num_positions; position++){
-        if (!cage[2][position] == 0){
+    for (int position = 1; position < num_positions; position++){
+        if (!cage[2][position] == 0){ //　3段目にキューブが入っていない場合
             continue;
         }
         if (player == 1){
@@ -236,7 +236,10 @@ int winner(int** cage, int player, pair<int, int> last_two_moves){
     //     }
     // }
 
-
+    for (int i = 0; i < height; i++){
+        delete [] cage[i];
+    }
+    delete [] cage;
 
     // 再帰開始
     int all = 1;
